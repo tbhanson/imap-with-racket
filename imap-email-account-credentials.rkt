@@ -13,8 +13,8 @@
    (open-input-file file)))
 
 ; make a container to hold multiple accounts with a way to get one imap-email-account-credentials by accountname for convenience
-(define (read-email-account-credentials-hash file)
-  (let ((account-list (read (open-input-file file))))
+(define (read-email-account-credentials-hash-from-port port)
+  (let ((account-list (read (open-input-file port))))
     (for/fold ([result (make-immutable-hash)])
               ([account account-list])
       (let ((key (imap-email-account-credentials-accountname account)))
@@ -32,6 +32,6 @@
 
  read-email-account-credentials
  read-email-account-credentials-from-file
- read-email-account-credentials-hash
+ read-email-account-credentials-hash-from-port
  )
  

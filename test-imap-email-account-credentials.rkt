@@ -41,12 +41,12 @@
 ; test reading a list of two accounts into a hash of accounts
 (check-equal?
  (hash-has-key?
-  (read-email-account-credentials-hash filename-containing-two-accounts)
+  (read-email-account-credentials-hash-from-port filename-containing-two-accounts)
   "an account")
  #t)
 
 (check-equal?
  (hash-has-key?
-  (read-email-account-credentials-hash filename-containing-two-accounts)
+  (read-email-account-credentials-hash-from-port filename-containing-two-accounts)
   "foobar")
  #f)
