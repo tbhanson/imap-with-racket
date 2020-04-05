@@ -34,26 +34,15 @@
 
 (let ([filename-containing-two-accounts "test-data/list-of-test-imap-email-account-credentials.rkt"])
   (begin
-    (check-equal?
-     (string? filename-containing-two-accounts)
-     #t)
-
-    ; test reading a list of two accounts from another file
+    ; test reading a list of two accounts from a file containing two such
     (check-equal?
      (map
       imap-email-account-credentials?
       (read (open-input-string (file->string filename-containing-two-accounts))))
-
      '(#t #t))
 
-    (check-equal?
-     (string? filename-containing-two-accounts)
-     #t)
-
-    ; this works but seems strange: we expected to test read-email-account-credentials-hash-from-file-named
-    ; but this fails here complaining it has a port instead of a string (!?)
-    ; does the string somehow stand for the opened input file used above?
-    (let ([test-cred-hash (read-email-account-credentials-hash-from-port filename-containing-two-accounts)])
+    ; test reading a hash of credentials from  a file containing two such
+    (let ([test-cred-hash (read-email-account-credentials-hash-from-file-named filename-containing-two-accounts)])
       (begin
         ; test reading a list of two accounts into a hash of accounts
         (check-equal?

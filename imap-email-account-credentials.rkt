@@ -20,7 +20,7 @@
 
 ; make a container to hold multiple accounts with a way to get one imap-email-account-credentials by accountname for convenience
 (define (read-email-account-credentials-hash-from-port port)
-  (let ((account-list (read (open-input-file port))))
+  (let ((account-list (read port)))
     (for/fold ([result (make-immutable-hash)])
               ([account account-list])
       (let ((key (imap-email-account-credentials-accountname account)))
@@ -29,7 +29,7 @@
 (define (read-email-account-credentials-hash-from-file-named filename)
   (begin
     ;(assert (string? filename))
-    (printf "(read-email-account-credentials-hash-from-file-named filename (~a)~n" filename)
+    ;(printf "(read-email-account-credentials-hash-from-file-named filename (~a)~n" filename)
     (read-email-account-credentials-hash-from-port
      (open-input-file filename))))
    
