@@ -1,11 +1,16 @@
 #lang racket
 
 ; a structure to hold the basics we need
-; these lea
 (struct imap-email-account-credentials
   (accountname hostname mailaddress password)
   #:prefab
   )
+
+(define (default-ini-filepath)
+  (let ([iniFileName ".myImapCreds"])
+    (let ([iniFilePath (build-path (find-system-path 'home-dir) iniFileName)])
+      iniFilePath)))
+
 
 ; we chose a serialization of the above such that all we need is read :)
 ; cf. https://docs.racket-lang.org/guide/serialization.html#%28tech._serialization%29
@@ -49,5 +54,8 @@
  read-one-email-account-credentials-from-file-named
  read-email-account-credentials-hash-from-port
  read-email-account-credentials-hash-from-file-named
+
+ ; convenience
+ default-ini-filepath
  )
  

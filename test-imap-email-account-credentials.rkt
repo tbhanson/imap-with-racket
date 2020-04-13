@@ -3,6 +3,11 @@
 (require rackunit
          "imap-email-account-credentials.rkt")
 
+; test default imap ini file function (to test more would make assumptions about user)
+(check-equal?
+ (string? (default-ini-filepath))
+ #t)
+
 ; test one account, struct-provided basics
 (let ((some-accountname "my account")
       (some-host "some.host.net")
