@@ -5,8 +5,9 @@
          "attempt-connect-to-imap-account.rkt")
 
 (require net/imap)
+(require net/head)
 
-(require racket/pretty)
+;(require racket/pretty)
 
 ; second attempt after getting some clues
 ;   https://groups.google.com/forum/m/?hl=en#!topic/racket-users/hpwQTdDoMlw
@@ -55,13 +56,25 @@
                        (imap-connection? imap-conn)
                        #t)
                       (let ([msg-count (imap-messages imap-conn)])
-                        (begin
-                          (printf "there are ~a messages in folder ~a of account ~a~n" msg-count test-folder test-acct-name)
-                          (let ([first-message (imap-get-messages imap-conn '(1) '(uid header body flags))])
-                            (begin
-                              (printf "first message:~n~a~n" (pretty-print first-message))
-                              (imap-disconnect imap-conn)
-                            )))))))))
-          ))))))
-
+                        (let ([first-N (min 5 msg-count)])
+                          (begin
+                            (printf "there are ~a messages in folder ~a of account ~a~n" msg-count test-folder test-acct-name)
+                            (printf "we will look at the first ~a of them~n" first-N)
+                            (let ([first-N-messages (imap-get-messages imap-conn (stream->list (in-range 1 first-N)) '(uid header body flags))])
+                              (begin
+                                (for ([s first-N-messages])
+                                  (let ([uid (first s)]
+                                        [header (second s)])
+                                    (let ([from (bytes->string/utf-8 (extract-field #"from" header))]
+                                          [to (bytes->string/utf-8 (extract-field #"to" header))]
+                                          [subject (bytes->string/utf-8 (extract-field #"subject" header))]
+                                          [date (bytes->string/utf-8 (extract-field #"date" header))])
+                                      (printf "message id: ~a~n" uid)
+                                      (printf "  from: ~a~n" from)
+                                      (printf "  to ~a~n" to)
+                                      (printf "  subject ~a~n" subject)
+                                      (printf "  date ~a~n" date))))
+                                (imap-disconnect imap-conn))))))
+                      )))))))))))
+                      
 
