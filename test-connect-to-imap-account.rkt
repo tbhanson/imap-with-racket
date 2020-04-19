@@ -8,10 +8,25 @@
 (require net/head)
 
 
+; compute some statistics for "INBOX" of account "tim at w-h"
+(let ([iniFilePath (default-ini-filepath)])
+  (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
+    (let ([test-acct (hash-ref creds_hash "tim at w-h")])
+      (let ([under-test  (collect-some-imap-account-stats test-acct "INBOX" (cons 1 5) #"to")])
+        (begin
+          (check-equal?
+           (hash? under-test)
+           #t)
+          (check-equal?
+           (hash-empty? under-test)
+           #f))))))
+          
+        
+        
+
 ; second attempt after getting some clues
 ;   https://groups.google.com/forum/m/?hl=en#!topic/racket-users/hpwQTdDoMlw
 ; and from looking at part of sirmail
-
 ; preliminaries:
 ; test with tim@..., one main target for cleaning up
 (let ([iniFilePath (default-ini-filepath)])
@@ -31,7 +46,7 @@
         
         (let ([test_data
                (list
-                (list "tim at w-h" "INBOX")
+                ;(list "tim at w-h" "INBOX")
                 ;(list "some account name in iniFile" "INBOX" ) ; --> imap-connect: username or password rejected by server: (NO authentication failed)
                 ;(list "a gmail accountname" 993 "INBOX"  #t #f) ; --> imap-connect: username or password rejected by server: (NO |[ALERT]| Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure))
                 
