@@ -7,7 +7,6 @@
 (require net/imap)
 (require net/head)
 
-;(require racket/pretty)
 
 ; second attempt after getting some clues
 ;   https://groups.google.com/forum/m/?hl=en#!topic/racket-users/hpwQTdDoMlw
@@ -50,7 +49,7 @@
                  #t)
                 (let ([test-acct (hash-ref creds_hash test-acct-name)])
                   (let ([imap-conn
-                         (attempt-secure-connect-to-imap-account test-acct test-folder)])
+                         (securely-connect-to-imap-account test-acct test-folder)])
                     (begin
                       (check-equal?
                        (imap-connection? imap-conn)
