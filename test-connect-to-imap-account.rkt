@@ -2,7 +2,7 @@
 
 (require rackunit
          "imap-email-account-credentials.rkt"
-         "attempt-connect-to-imap-account.rkt")
+         "connect-to-imap-account.rkt")
 
 (require net/imap)
 (require net/head)
