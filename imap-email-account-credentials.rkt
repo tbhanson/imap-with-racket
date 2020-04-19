@@ -6,6 +6,7 @@
   #:prefab
   )
 
+; keep personal account set up and secrets in a standard place
 (define (default-ini-filepath)
   (let ([iniFileName ".myImapCreds"])
     (let ([iniFilePath (build-path (find-system-path 'home-dir) iniFileName)])

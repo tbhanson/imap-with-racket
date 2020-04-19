@@ -4,6 +4,10 @@
          "imap-email-account-credentials.rkt"
          "attempt-connect-to-imap-account.rkt")
 
+(require net/imap)
+
+(require racket/pretty)
+
 ; second attempt after getting some clues
 ;   https://groups.google.com/forum/m/?hl=en#!topic/racket-users/hpwQTdDoMlw
 ; and from looking at part of sirmail
@@ -44,34 +48,20 @@
                  (hash-has-key? creds_hash test-acct-name)
                  #t)
                 (let ([test-acct (hash-ref creds_hash test-acct-name)])
-                  (attempt-secure-connect-to-imap-account test-acct test-folder)
-                  )))))))))
+                  (let ([imap-conn
+                         (attempt-secure-connect-to-imap-account test-acct test-folder)])
+                    (begin
+                      (check-equal?
+                       (imap-connection? imap-conn)
+                       #t)
+                      (let ([msg-count (imap-messages imap-conn)])
+                        (begin
+                          (printf "there are ~a messages in folder ~a of account ~a~n" msg-count test-folder test-acct-name)
+                          (let ([first-message (imap-get-messages imap-conn '(1) '(uid header body flags))])
+                            (begin
+                              (printf "first message:~n~a~n" (pretty-print first-message))
+                              (imap-disconnect imap-conn)
+                            )))))))))
+          ))))))
 
-
-; original attempt, works so far for my tigertech accounts servers, but not for gmail ones (where I would need to master OAuthId, I think)
-;(let ([iniFileName ".myImapCreds"])
-;  (let ([iniFilePath (build-path (find-system-path 'home-dir) iniFileName)])
-;    (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
-;      (let ([test_data
-;             (list
-;              (list "tim at w-h" 993 "INBOX" #t #t)
-;              ;(list "account name in iniFile" 993 "INBOX"  #t #f) ; --> imap-connect: username or password rejected by server: (NO authentication failed)
-;              ;(list "account name in iniFile" 993 "INBOX"  #f #t) ; tcp-read: error reading system error: Connection reset by peer; errno=54
-;
-;              ;(list "a gmail accountname" 993 "INBOX"  #t #f) ; --> imap-connect: username or password rejected by server: (NO |[ALERT]| Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure))
-;              )])
-;        
-;        (for ([test-item test_data])
-;          (printf "test-item: ~a~n" test-item)
-;          (let ([test-acct-name (car test-item)]
-;                [test-port (cadr test-item)]
-;                [test-folder (caddr test-item)]
-;                (test-tls-before? (cadddr test-item))
-;                (test-try-tls? (first (cddddr test-item))))
-;            (check-equal?
-;             (hash-has-key? creds_hash test-acct-name)
-;             #t)
-;            (let ((test-acct (hash-ref creds_hash test-acct-name)))
-;              (attempt-connect-to-imap-account test-acct test-port test-folder test-tls-before? test-try-tls?)
-;              )))))))
 

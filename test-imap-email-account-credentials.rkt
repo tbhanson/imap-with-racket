@@ -5,7 +5,7 @@
 
 ; test default imap ini file function (to test more would make assumptions about user)
 (check-equal?
- (string? (default-ini-filepath))
+ (path? (default-ini-filepath))
  #t)
 
 ; test one account, struct-provided basics
