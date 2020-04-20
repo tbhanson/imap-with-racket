@@ -12,15 +12,33 @@
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (let ([test-acct (hash-ref creds_hash "tim at w-h")])
-      (let ([under-test  (collect-some-imap-account-stats test-acct "INBOX" (cons 1 5) #"to")])
-        (begin
-          (check-equal?
-           (hash? under-test)
-           #t)
-          (check-equal?
-           (hash-empty? under-test)
-           #f))))))
-          
+      (let ([fields (list #"to" #"from")]
+            [msg-count-to-examine 10])
+        (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
+          (begin
+            (check-equal?
+             (hash? under-test)
+             #t)
+            (check-equal?
+             (hash-count under-test)
+             (length fields))
+            (for ([f fields])
+              (check-equal?
+               (hash-has-key? under-test f)
+               #t))
+            ; for each main key the sum of all counts in its hash must equal the number of messages we looked at
+            (for ([f fields])
+              (let ([sub-hash (hash-ref under-test f)])
+                (check-equal?
+                 (for/fold ([sum-counts 0])
+                           ([key (hash-keys sub-hash)])
+                   (values (+ sum-counts (hash-ref sub-hash key))))
+                 msg-count-to-examine)))
+
+            ; show what we have for now to help debug and understand
+            (for ([key (hash-keys under-test)])
+              (printf "under-test at ~a: ~a~n" key (hash-ref under-test key)))))))))
+  
         
         
 
