@@ -13,7 +13,7 @@
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (let ([test-acct (hash-ref creds_hash "tim at w-h")])
       (let ([fields (list #"to" #"from")]
-            [msg-count-to-examine 10])
+            [msg-count-to-examine 100])
         (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
           (begin
             (check-equal?

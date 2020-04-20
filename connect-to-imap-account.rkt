@@ -60,15 +60,21 @@
           (printf "there are ~a messages in folder ~a of account ~a~n" msg-count mail-folder (imap-email-account-credentials-accountname email-account-credential))
           (assert (<= lo-index msg-count) (format "autschn! lo-index ~a is larger than msg-count ~a~n" lo-index msg-count))
           (printf "we will look at those indexed ~a to ~a~n" lo-index hi-index)
-          (let ([range-of-messages (imap-get-messages imap-conn (stream->list (in-range lo-index hi-index)) '(header))])
+          (let ([range-of-messages (imap-get-messages imap-conn (stream->list (in-range lo-index (+ hi-index 1))) '(header))])
             (for/fold ([result (make-immutable-hash)])
                       ([field header-fields])
               (values (hash-set
                        result
                        field 
                        (for/fold ([counts-by-field-value (make-immutable-hash)])
-                                 ([msg range-of-messages])
+                                 ([msg range-of-messages]
+                                  [idx (in-range lo-index (+ hi-index 1))])
                          (let ([header (first msg)])
                            (let ([field-contents (bytes->string/utf-8 (extract-field field header))])
-                             (values (hash-update counts-by-field-value field-contents (lambda (n) (+ n 1)) 1))))))))))))))
+                             (begin
+;                               (printf "idx: ~a~n" idx)
+;                               (printf "  counts-by-field-value: ~a~n" counts-by-field-value)
+;                               (printf "  field-contents: ~a~n" field-contents)
+                               (values (hash-update counts-by-field-value field-contents (lambda (n) (+ n 1)) 0))))))
+                       )))))))))
                        
