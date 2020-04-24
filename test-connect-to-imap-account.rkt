@@ -16,8 +16,8 @@
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (let ([test-acct (hash-ref creds_hash "tim at w-h")])
-      (let ([fields (list #"to" #"from")]
-            [msg-count-to-examine 1000])
+      (let ([fields (list #"to" #"from" #"date")]
+            [msg-count-to-examine 10])
         (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
           (begin
             (check-equal?
