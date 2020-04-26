@@ -72,9 +72,10 @@
                          (let ([header (first msg)])
                            (let ([field-contents (bytes->string/utf-8 (extract-field field header))])
                              (begin
-;                               (printf "idx: ~a~n" idx)
-;                               (printf "  counts-by-field-value: ~a~n" counts-by-field-value)
-;                               (printf "  field-contents: ~a~n" field-contents)
+                               (printf "idx: ~a~n" idx)
+                               (printf "  counts-by-field-value: ~a~n" counts-by-field-value)
+                               (printf "  field-contents: ~a~n" field-contents)
+                               (printf "  (date? field-contents): ~a~n" (date? field-contents))
+                               (printf "  (string? field-contents): ~a~n" (string? field-contents))
                                (values (hash-update counts-by-field-value field-contents (lambda (n) (+ n 1)) 0))))))
                        )))))))))
-                       

@@ -8,6 +8,8 @@
 (require net/head)
 
 
+
+
 ; compute some statistics for "INBOX" of account "tim at w-h"
 ; NB: when I upped the count examined from 10 to 100 the real time spent was 3+ seconds, up from 3- seconds
 ; when I upped it from 100 to 1000, time elapsed was about 4.4s
