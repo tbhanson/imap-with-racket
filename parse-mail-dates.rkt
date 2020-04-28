@@ -4,11 +4,25 @@
 
 
 (provide
+ parsable-as-datetime?
  possible-parse-date-time-string
  )
 
+(define (parsable-as-datetime? candidate-date-string date-string-pattern)
+  (and (string? candidate-date-string)
+       (string? date-string-pattern)
+       (with-handlers ((exn:gregor:parse? (lambda (e) #false)))
+         (datetime? (parse-datetime candidate-date-string date-string-pattern)))))
+
+  
+
 (define (possible-parse-date-time-string maybe-date-time-string)
-  (parse-datetime maybe-date-time-string "yyyy-MM-dd'T'HH:mm:ssxxx"))
+  (cond [(parsable-as-datetime? maybe-date-time-string "yyyy-MM-dd'T'HH:mm:ssxxx")
+         (parse-datetime maybe-date-time-string "yyyy-MM-dd'T'HH:mm:ssxxx")]
+        [(parsable-as-datetime? maybe-date-time-string "dd MMM yyyy HH:mm:ss")
+         (parse-datetime maybe-date-time-string "dd MMM yyyy HH:mm:ss")]
+        [else #f]))
+        
 
 
 ;(parameterize ([current-locale "en"])
