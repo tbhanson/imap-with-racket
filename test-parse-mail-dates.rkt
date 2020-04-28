@@ -16,12 +16,6 @@
  (datetime
   2015 3 15 2 2 2))
 
-(check-exn
-   exn:fail?
-   (lambda ()
-     (raise (make-exn:fail "Hi there"
-                           (current-continuation-marks)))))
-
 
 (check-exn
    exn:gregor:parse?
