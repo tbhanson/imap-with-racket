@@ -4,9 +4,10 @@
 
 
 (provide
- parsable-as-datetime?
- possible-parse-date-time-string
  supported-mail-patterns
+ parsable-as-datetime?
+ supported-pattern-which-parses-date-time-string?
+ possible-parse-date-time-string
  )
 
 (define supported-mail-patterns
@@ -21,7 +22,11 @@
          (datetime? (parse-datetime candidate-date-string date-string-pattern)))))
 
   
-
+(define (supported-pattern-which-parses-date-time-string? maybe-date-time-string)
+  (for/first ([mail-pattern supported-mail-patterns]
+              #:when (parsable-as-datetime? maybe-date-time-string mail-pattern))
+    mail-pattern))
+  
 (define (possible-parse-date-time-string maybe-date-time-string)
   (for/first ([mail-pattern supported-mail-patterns]
               #:when (parsable-as-datetime? maybe-date-time-string mail-pattern))

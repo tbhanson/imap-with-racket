@@ -10,7 +10,13 @@
 (run-tests
   (test-suite
    "all"
-   
+
+   (test-suite
+    "check we have known patterns"
+    (check-equal?
+     (empty? supported-mail-patterns)
+     #f))
+
    (test-suite
     "test parsable-as-datetime?"
     (check-equal?
@@ -19,6 +25,16 @@
     (check-equal?
      (parsable-as-datetime?"21 Jun 2015 15:45:40 -0000" "yyyy-MM-dd'T'HH:mm:ssxxx")
      #f))
+
+   (test-suite
+    "test supported-pattern-which-parses-date-time-string?"
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "2015-03-15T02:02:02-04:00")
+     "yyyy-MM-dd'T'HH:mm:ssxxx")
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "21 Jun 2015 15:45:40 -0000")
+     #f))
+   
    
    (test-suite
     "test possible-parse-date-time-string"
