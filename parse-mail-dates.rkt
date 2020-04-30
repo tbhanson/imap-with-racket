@@ -6,7 +6,13 @@
 (provide
  parsable-as-datetime?
  possible-parse-date-time-string
+ supported-mail-patterns
  )
+
+(define supported-mail-patterns
+  (list
+   "yyyy-MM-dd'T'HH:mm:ssxxx"
+   "dd MMM yyyy HH:mm:ss"))
 
 (define (parsable-as-datetime? candidate-date-string date-string-pattern)
   (and (string? candidate-date-string)
@@ -17,12 +23,10 @@
   
 
 (define (possible-parse-date-time-string maybe-date-time-string)
-  (cond [(parsable-as-datetime? maybe-date-time-string "yyyy-MM-dd'T'HH:mm:ssxxx")
-         (parse-datetime maybe-date-time-string "yyyy-MM-dd'T'HH:mm:ssxxx")]
-        [(parsable-as-datetime? maybe-date-time-string "dd MMM yyyy HH:mm:ss")
-         (parse-datetime maybe-date-time-string "dd MMM yyyy HH:mm:ss")]
-        [else #f]))
-        
+  (for/first ([mail-pattern supported-mail-patterns]
+              #:when (parsable-as-datetime? maybe-date-time-string mail-pattern))
+    (parse-datetime maybe-date-time-string mail-pattern)))
+ 
 
 
 ;(parameterize ([current-locale "en"])
