@@ -2,7 +2,8 @@
 
 (require rackunit
          "imap-email-account-credentials.rkt"
-         "connect-to-imap-account.rkt")
+         "connect-to-imap-account.rkt"
+         "parse-date-time-string-statistics.rkt")
 
 (require net/imap)
 (require net/head)
@@ -43,7 +44,14 @@
 
             ; show what we have for now to help debug and understand
             (for ([key (hash-keys under-test)])
-              (printf "under-test at ~a: ~a~n" key (hash-ref under-test key)))))))))
+              (printf "under-test at ~a: ~a~n" key (hash-ref under-test key)))
+            ; think about how hard it is to turn the date field into a date
+            (let ([date-strings-by-parsing-pattern
+                   (group-date-time-strings-by-parsing-pattern (hash-keys (hash-ref under-test #"date")))])
+              (printf "date-strings-by-parsing-pattern: ~a~n" date-strings-by-parsing-pattern)
+              )))))))
+
+
   
         
         

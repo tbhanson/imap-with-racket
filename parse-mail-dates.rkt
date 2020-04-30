@@ -13,7 +13,11 @@
 (define supported-mail-patterns
   (list
    "yyyy-MM-dd'T'HH:mm:ssxxx"
-   "dd MMM yyyy HH:mm:ss"))
+   "dd MMM yyyy HH:mm:ss"
+   "dd MMM yyyy HH:mm:ss xxxx"
+   "EEE, dd MMM yyyy HH:mm:ss xxxx"
+;   "Sun, 21 Jun 2015 14:38:22 +0000"
+   ))
 
 (define (parsable-as-datetime? candidate-date-string date-string-pattern)
   (and (string? candidate-date-string)
