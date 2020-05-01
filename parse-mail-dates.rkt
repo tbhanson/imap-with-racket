@@ -16,10 +16,13 @@
    "dd MMM yyyy HH:mm:ss"
    "dd MMM yyyy HH:mm:ss xxxx"
    "EEE, dd MMM yyyy HH:mm:ss xxxx"
-;   "Sun, 21 Jun 2015 14:38:22 +0000"
+   ;   "Sun, 21 Jun 2015 14:38:22 +0000"
+   "EEE, dd MMM yyyy HH:mm:ss xxxx (z)"
+   ;Sun, 21 Jun 2015 17:50:44 -0500 (CDT)
    ))
 
 (define (parsable-as-datetime? candidate-date-string date-string-pattern)
+  (printf "(parsable-as-datetime? ~a ~a)~n" candidate-date-string date-string-pattern)
   (and (string? candidate-date-string)
        (string? date-string-pattern)
        (with-handlers ((exn:gregor:parse? (lambda (e) #false)))

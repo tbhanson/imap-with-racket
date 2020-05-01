@@ -35,7 +35,13 @@
     (check-equal?
      (supported-pattern-which-parses-date-time-string? "21 Jun 2015 15:45:40 -0000")
      "dd MMM yyyy HH:mm:ss xxxx"
-     ))
+     )
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "Sun, 21 Jun 2015 17:50:44 -0500 (CDT)")
+     "dd MMM yyyy HH:mm:ss xxxx"
+     )
+
+    )
    
    
    (test-suite
