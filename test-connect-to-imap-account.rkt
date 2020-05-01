@@ -18,7 +18,7 @@
 ; from is still interesting and I think the next project will be looking at date sent collapsed into year or year-month, I suspect
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
-    (let ([test-acct (hash-ref creds_hash "tim at w-h")])
+    (let ([test-acct (hash-ref creds_hash (first (list "tbhanson gmx" "tim at w-h")))])
       (let ([fields (list #"from" #"date")]
             [msg-count-to-examine 10])
         (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])

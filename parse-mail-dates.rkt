@@ -15,8 +15,12 @@
    "yyyy-MM-dd'T'HH:mm:ssxxx"
    "dd MMM yyyy HH:mm:ss"
    "dd MMM yyyy HH:mm:ss xxxx"
+
    "EEE, dd MMM yyyy HH:mm:ss xxxx"
-   ;   "Sun, 21 Jun 2015 14:38:22 +0000"
+   ; "Sun, 21 Jun 2015 14:38:22 +0000"
+
+   "EEE, d MMM yyyy HH:mm:ss xxxx"
+   ; "Thu, 9 Oct 2014 15:00:02 -0700 (PDT)"   
 
    ; the parenthetical at the end of the next is redundant and ambiguous (the latter part being not really supportable)
    ; the most pragmatic approach for me at the moment would seem to be to strip it off (at which point the previous rule should work)

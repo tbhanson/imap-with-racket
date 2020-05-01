@@ -43,6 +43,13 @@
      "EEE, dd MMM yyyy HH:mm:ss xxxx"
      )
 
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "Thu, 9 Oct 2014 15:00:02 -0700 (PDT)")
+     "EEE, d MMM yyyy HH:mm:ss xxxx"
+     )
+
+    
+
     )
    
    

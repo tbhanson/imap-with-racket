@@ -63,9 +63,22 @@
         )
        )
      )
+
+   "one parsable item"
+   (let ([parsable-datetime "2015-03-15T02:02:02-04:00"])
+     (let ([under-test (parse-date-time-string-statistics (list parsable-datetime))])
+       (check-equal?
+        (under-test 'keys)
+        (list "yyyy-MM-dd'T'HH:mm:ssxxx"))
+       
+       (check-equal?
+        (under-test 'counts-by-key)
+        (hash-set (hash) "yyyy-MM-dd'T'HH:mm:ssxxx" 1)
+        )
+       )
+     )
    )
   )
- )
-
+)
 
  
