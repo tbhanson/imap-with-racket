@@ -46,7 +46,7 @@
       '())
 
      (check-equal?
-      (under-test 'show-counts-by-key)
+      (under-test 'counts-by-key)
       (hash))
      )
 
@@ -58,7 +58,7 @@
         (list #f))
 
        (check-equal?
-        (under-test 'show-counts-by-key)
+        (under-test 'counts-by-key)
         (hash-set (hash) #f 1)
         )
        )

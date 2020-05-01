@@ -19,7 +19,7 @@
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (let ([test-acct (hash-ref creds_hash "tim at w-h")])
-      (let ([fields (list #"to" #"from" #"date")]
+      (let ([fields (list #"from" #"date")]
             [msg-count-to-examine 10])
         (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
           (begin
@@ -46,9 +46,9 @@
             (for ([key (hash-keys under-test)])
               (printf "under-test at ~a: ~a~n" key (hash-ref under-test key)))
             ; think about how hard it is to turn the date field into a date
-            (let ([date-strings-by-parsing-pattern
-                   (group-date-time-strings-by-parsing-pattern (hash-keys (hash-ref under-test #"date")))])
-              (printf "date-strings-by-parsing-pattern: ~a~n" date-strings-by-parsing-pattern)
+            (let ([date-strings-by-parsing-pattern-stats
+                   (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
+              (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-key) ~a~n" (date-strings-by-parsing-pattern-stats 'show-counts-by-key))
               )))))))
 
 

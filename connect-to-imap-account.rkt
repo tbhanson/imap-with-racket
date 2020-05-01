@@ -70,7 +70,12 @@
                                  ([msg range-of-messages]
                                   [idx (in-range lo-index (+ hi-index 1))])
                          (let ([header (first msg)])
-                           (let ([field-contents (bytes->string/utf-8 (extract-field field header))])
+                           (let ([field-contents
+                                  (with-handlers
+                                      ([exn:fail?
+                                        (lambda (e)
+                                          (format "??? (~a)" e))])
+                                    (bytes->string/utf-8 (extract-field field header)))])
                              (begin
                                (printf "idx: ~a~n" idx)
                                (printf "  counts-by-field-value: ~a~n" counts-by-field-value)

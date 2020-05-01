@@ -24,21 +24,32 @@
 ; given an enumberable-of-date-time-strings, classify these by supported parsable date-time pattern (or "unsupported" if none works)
 ; return an object containing the hash we can query about stats
 (define (parse-date-time-string-statistics enumberable-of-date-time-strings)
+  (define (get-counts-by-key a-hash)
+    (for/fold ([counts-by-key
+                (hash)])
+              ([key (hash-keys a-hash)])
+      (values (hash-set counts-by-key key (length (hash-ref a-hash key))))))
+  
   (let ([stats
          (group-date-time-strings-by-parsing-pattern enumberable-of-date-time-strings)])
-
+    
     (define (dispatch msg)
-      (cond [(eq? msg ;'show-keys
-                  'keys)
-             ;(pretty-print
-              (hash-keys stats)
-              ;)
-              ]
-            [(eq? msg 'show-counts-by-key)
-             (for/fold ([counts-by-key
-                         (hash)])
-                       ([key (hash-keys stats)])
-               (values (hash-set counts-by-key key (length (hash-ref stats key)))))]
+      (cond [(eq? msg 'keys)
+             (hash-keys stats)
+             ]
             
-            [else (raise "error: i don't know how to ~a yet" msg)]))
+            [(eq? msg 'show-keys)
+             (pretty-print (hash-keys stats))
+             ]
+            
+            [(eq? msg 'counts-by-key)
+             (get-counts-by-key stats)
+             ]
+            
+            [(eq? msg 'show-counts-by-key)
+             (pretty-print
+              (get-counts-by-key stats))
+             ]
+            
+            [else (raise (format "error: i don't know how to ~a yet" msg))]))
     dispatch))

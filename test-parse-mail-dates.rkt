@@ -36,9 +36,11 @@
      (supported-pattern-which-parses-date-time-string? "21 Jun 2015 15:45:40 -0000")
      "dd MMM yyyy HH:mm:ss xxxx"
      )
+
+    ; now supported with hack
     (check-equal?
      (supported-pattern-which-parses-date-time-string? "Sun, 21 Jun 2015 17:50:44 -0500 (CDT)")
-     "dd MMM yyyy HH:mm:ss xxxx"
+     "EEE, dd MMM yyyy HH:mm:ss xxxx"
      )
 
     )
@@ -55,7 +57,8 @@
      (datetime? 
       (possible-parse-date-time-string "Sun, 21 Jun 2015 14:38:22 +0000"))
      #t)
-    
+
+    ; think about where the timezone goes
     (check-equal?
      (possible-parse-date-time-string "2015-03-15T02:02:02-04:00")
      (datetime
@@ -65,7 +68,12 @@
      (possible-parse-date-time-string "21 Jun 2015 15:45:40")
      (datetime
       2015 6 21 15 45 40))
-    
+
+    (check-equal?
+     (possible-parse-date-time-string "Sun, 21 Jun 2015 15:38:28 -0400 (EDT)")
+     (datetime 2015 6 21 15 38 28) ; perhaps with added timezone info somewhere
+     )
+     
     (check-equal?
      (possible-parse-date-time-string "June 2, 1959; 12:34:56")
      #f)
