@@ -48,7 +48,23 @@
      "EEE, d MMM yyyy HH:mm:ss xxxx"
      )
 
-    
+    ; other variants that turned up during testing, e.g. single digit day of month
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "9 Oct 2014 22:20:57 -0000")
+     "d MMM yyyy HH:mm:ss xxxx"
+     )
+
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "Mon, 20 10 2014 04:00:10")
+     "EEE, dd MM yyyy HH:mm:ss"
+     )
+     
+    (check-equal?
+     (supported-pattern-which-parses-date-time-string? "Tues, 28 Oct 2014 03:42:57 -0800")
+     "dd MMM yyyy HH:mm:ss xxxx"
+     )
+     
+     ;Tues, 28 Oct 2014 03:42:57 -0800 Tues, 21 Oct 2014 11:27:03 -0800 Tues, 21 Oct 2014 22:51:14 -0800
 
     )
    

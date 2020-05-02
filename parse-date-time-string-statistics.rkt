@@ -6,6 +6,7 @@
  )
 
 (require
+  gregor
   "parse-mail-dates.rkt")
 
 ; given an enumberable-of-date-time-strings, classify these by supported parsable date-time pattern (or "unsupported" if none works)
@@ -22,7 +23,7 @@
 
 
 ; given an enumberable-of-date-time-strings, classify these by supported parsable date-time pattern (or "unsupported" if none works)
-; return an object containing the hash we can query about stats
+; return an object that lets us query the stats
 (define (parse-date-time-string-statistics enumberable-of-date-time-strings)
   (define (get-counts-by-key a-hash)
     (for/fold ([counts-by-key
@@ -30,26 +31,42 @@
               ([key (hash-keys a-hash)])
       (values (hash-set counts-by-key key (length (hash-ref a-hash key))))))
   
-  (let ([stats
-         (group-date-time-strings-by-parsing-pattern enumberable-of-date-time-strings)])
+  (let ([counts-by-date-string-pattern
+         (group-date-time-strings-by-parsing-pattern enumberable-of-date-time-strings)]
+        [counts-by-year
+         (for/fold ([count-by-year (hash)])
+                   ([date-time-string enumberable-of-date-time-strings])
+           (let ([hopefully-date-time (possible-parse-date-time-string date-time-string)])
+             (if hopefully-date-time
+                 (let ([year (->year hopefully-date-time)])
+                   (values (hash-update count-by-year year (lambda (year-count) (+ year-count 1)) 0)))
+                 (values count-by-year))
+             ))])
     
     (define (dispatch msg)
-      (cond [(eq? msg 'keys)
-             (hash-keys stats)
-             ]
-            
-            [(eq? msg 'show-keys)
-             (pretty-print (hash-keys stats))
-             ]
-            
-            [(eq? msg 'counts-by-key)
-             (get-counts-by-key stats)
-             ]
-            
-            [(eq? msg 'show-counts-by-key)
-             (pretty-print
-              (get-counts-by-key stats))
-             ]
-            
-            [else (raise (format "error: i don't know how to ~a yet" msg))]))
+      (cond
+        
+        [(eq? msg 'counts-by-date-string-pattern)
+         (get-counts-by-key counts-by-date-string-pattern)
+         ]
+        
+        [(eq? msg 'show-counts-by-date-string-pattern)
+         (pretty-format
+          (get-counts-by-key counts-by-date-string-pattern))
+         ]
+
+        [(eq? msg 'counts-by-year)
+         counts-by-year
+         ]
+        
+        [(eq? msg 'show-counts-by-year)
+         (pretty-format
+          counts-by-year)
+         ]
+
+        [(eq? msg 'date-strings-not-parsed)
+         (hash-ref counts-by-date-string-pattern #f '())
+         ]
+        
+        [else (raise (format "error: i don't know how to ~a yet" msg))]))
     dispatch))

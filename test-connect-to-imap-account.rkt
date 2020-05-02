@@ -20,7 +20,7 @@
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (let ([test-acct (hash-ref creds_hash (first (list "tbhanson gmx" "tim at w-h")))])
       (let ([fields (list #"from" #"date")]
-            [msg-count-to-examine 10])
+            [msg-count-to-examine 1000])
         (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
           (begin
             (check-equal?
@@ -44,13 +44,23 @@
 
             ; show what we have for now to help debug and understand
             (for ([key (hash-keys under-test)])
-              (printf "under-test at ~a: ~a~n" key (hash-ref under-test key)))
-            ; think about how hard it is to turn the date field into a date
-            (let ([date-strings-by-parsing-pattern-stats
-                   (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
-              (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-key) ~a~n" (date-strings-by-parsing-pattern-stats 'show-counts-by-key))
-              )))))))
+              (begin
+                (printf "-------~n")
+                (if (eq? key #"date")
+                    (let ([date-strings-by-parsing-pattern-stats
+                           (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
+                      (begin
+                        (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern) ~a~n"
+                                (date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern))
+                        (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-year):~n ~a~n"
+                                (date-strings-by-parsing-pattern-stats 'show-counts-by-year))
+                        (printf "(date-strings-by-parsing-pattern-stats 'date-strings-not-parsed):~n ~a~n"
+                                (date-strings-by-parsing-pattern-stats 'date-strings-not-parsed))
+                        ))
+                    (printf "under-test at ~a: ~a~n" key
+                            (pretty-print (hash-ref under-test key))))))
 
+            ))))))
 
   
         

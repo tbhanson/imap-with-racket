@@ -15,9 +15,20 @@
    "yyyy-MM-dd'T'HH:mm:ssxxx"
    "dd MMM yyyy HH:mm:ss"
    "dd MMM yyyy HH:mm:ss xxxx"
+   "d MMM yyyy HH:mm:ss xxxx"
 
    "EEE, dd MMM yyyy HH:mm:ss xxxx"
    ; "Sun, 21 Jun 2015 14:38:22 +0000"
+
+   "EEE, dd MM yyyy HH:mm:ss"
+   ; "Mon, 20 10 2014 04:00:10"
+
+   ; this one won't work and will require another work-around: 4-character day-of-week abbreviations are not specified at the standard
+   ; cf. https://www.unicode.org/reports/tr35/tr35-59/tr35-dates.html#Week_Data
+   ;
+   ;"EEEE, dd MMM yyyy HH:mm:ss xxxx"
+   ; "Tues, 28 Oct 2014 03:42:57 -0800"
+   
 
    "EEE, d MMM yyyy HH:mm:ss xxxx"
    ; "Thu, 9 Oct 2014 15:00:02 -0700 (PDT)"   
@@ -26,28 +37,31 @@
    ; the most pragmatic approach for me at the moment would seem to be to strip it off (at which point the previous rule should work)
    ;"EEE, dd MMM yyyy HH:mm:ss xxxx (z)"
    ;Sun, 21 Jun 2015 17:50:44 -0500 (CDT)
-   ;
-   ; some RnD notes:
-   ;> (regexp-match-positions #rx"[-+][0-9]+( [(][A-Z]+[)])" "Sun, 21 Jun 2015 17:50:44 -0500 (CDT)")
-   ;'((26 . 37) (31 . 37))
-   ;
-   ; cf.
-   ; https://groups.google.com/forum/m/?hl=en#!topic/racket-users/4HY3VnMKO4c
    ))
 
 (define (remove-redundant-ambiguous-suffix date-time-string)
-  (let ([possible-match (regexp-match-positions #rx"[-+][0-9]+( [(][A-Z]+[)])" date-time-string)])
+  (let ([possible-match (regexp-match-positions #px"[-+][0-9]{4}( [(][A-Z]+[)])$" date-time-string)])
     (if possible-match
         (substring date-time-string 0 (car (second possible-match)))
         date-time-string)))
-         
+
+(define (remove-non-compliant-day-of-week-prefix date-time-string)
+  (let ([possible-match (regexp-match-positions #px"^[A-Z][a-z]{3}, " date-time-string)])
+    (if possible-match
+        (substring date-time-string (cdr (first possible-match)))
+        date-time-string)))
+
+(define (sanitize-input-date-time-string date-time-string)
+  (remove-non-compliant-day-of-week-prefix
+   (remove-redundant-ambiguous-suffix date-time-string)))
+
 
 (define (parsable-as-datetime? candidate-date-string date-string-pattern)
   ;(printf "(parsable-as-datetime? ~a ~a)~n" candidate-date-string date-string-pattern)
   (and (string? candidate-date-string)
        (string? date-string-pattern)
        (let ([possibly-tweaked-input
-              (remove-redundant-ambiguous-suffix candidate-date-string)])
+              (sanitize-input-date-time-string candidate-date-string)])
               
          (with-handlers ([exn:gregor:parse? (lambda (e) #f)]
                          ;[exn:fail? (lambda (e) #f)]  ; not needed with built-in (remove-redundant-ambiguous-suffix x) work-around
@@ -57,7 +71,7 @@
   
 (define (supported-pattern-which-parses-date-time-string? maybe-date-time-string)
   (let ([possibly-tweaked-input
-         (remove-redundant-ambiguous-suffix maybe-date-time-string)])
+         (sanitize-input-date-time-string maybe-date-time-string)])
 
     (for/first ([mail-pattern supported-mail-patterns]
                 #:when (parsable-as-datetime? possibly-tweaked-input mail-pattern))
@@ -65,7 +79,7 @@
   
 (define (possible-parse-date-time-string maybe-date-time-string)
   (let ([possibly-tweaked-input
-         (remove-redundant-ambiguous-suffix maybe-date-time-string)])
+         (sanitize-input-date-time-string maybe-date-time-string)])
 
     (for/first ([mail-pattern supported-mail-patterns]
                 #:when (parsable-as-datetime? possibly-tweaked-input mail-pattern))
