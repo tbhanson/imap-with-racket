@@ -51,6 +51,10 @@
         (substring date-time-string (cdr (first possible-match)))
         date-time-string)))
 
+; clean up some prefixes and suffixes we can't handle
+; incidentally, since we need both of these anyway and since both the prefixex (some forms of day of week) and
+; suffixes (ambiguous, but human-friendly timezone name) are redundant, we could perhaps always strip both
+; using somewhat more all-encompassing patterns and save ourselves a few patterns
 (define (sanitize-input-date-time-string date-time-string)
   (remove-non-compliant-day-of-week-prefix
    (remove-redundant-ambiguous-suffix date-time-string)))
