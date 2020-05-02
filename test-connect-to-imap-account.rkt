@@ -21,7 +21,7 @@
     (for ([test-acct-name (list "tbhanson gmx" "tim at w-h")])
       (let ([test-acct (hash-ref creds_hash test-acct-name)])
         (let ([fields (list #"from" #"date")]
-              [msg-count-to-examine 1000])
+              [msg-count-to-examine 10])
           (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
             (begin
               (check-equal?
