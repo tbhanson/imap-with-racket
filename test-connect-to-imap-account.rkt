@@ -20,7 +20,7 @@
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (for ([test-acct-name (list "tbhanson gmx" "tim at w-h")])
       (let ([test-acct (hash-ref creds_hash test-acct-name)])
-        (let ([fields (list #"from" #"date")]
+        (let ([fields (list #"from" #"date" #"to")]
               [msg-count-to-examine 10])
           (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
             (begin
@@ -47,19 +47,27 @@
               (for ([key (hash-keys under-test)])
                 (begin
                   (printf "-------~n")
-                  (if (eq? key #"date")
-                      (let ([date-strings-by-parsing-pattern-stats
-                             (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
-                        (begin
-                          (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern) ~a~n"
-                                  (date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern))
-                          (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-year):~n ~a~n"
-                                  (date-strings-by-parsing-pattern-stats 'show-counts-by-year))
-                          (printf "(date-strings-by-parsing-pattern-stats 'date-strings-not-parsed):~n ~a~n"
-                                  (date-strings-by-parsing-pattern-stats 'date-strings-not-parsed))
-                          ))
-                      (printf "under-test at ~a: ~a~n" key
-                              (pretty-print (hash-ref under-test key))))))
+                  (cond [(eq? key #"date")
+                         (let ([date-strings-by-parsing-pattern-stats
+                                (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
+                           (begin
+                             (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern) ~a~n"
+                                     (date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern))
+                             (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-year):~n ~a~n"
+                                     (date-strings-by-parsing-pattern-stats 'show-counts-by-year))
+                             (printf "(date-strings-by-parsing-pattern-stats 'date-strings-not-parsed):~n ~a~n"
+                                     (date-strings-by-parsing-pattern-stats 'date-strings-not-parsed))
+                             ))]
+                        [(eq? key #"to")
+                         (printf "under-test at ~a: ~a~n" key
+                                 (pretty-print (hash-ref under-test key)))]
+                        [(eq? key #"from")
+                         (printf "under-test at ~a: ~a~n" key
+                                 (pretty-print (hash-ref under-test key)))]
+                        [else
+                         (printf "oops! no path for key: ~a~n" key)]
+                        
+                        )))
 
               )))))))
 

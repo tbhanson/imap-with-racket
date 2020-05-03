@@ -11,8 +11,10 @@
   (let ([just-addresses
          (for/fold ([addresses-so-far '()])
                    ([next-item enumerable-of-email-address-strings])
-           (values (append addresses-so-far (extract-addresses next-item))))])
-    (for/fold ([result (hash)])
-              ([next-address just-addresses])
-      (values
-       (hash-update result next-address (lambda (count-of-address) (+ count-of-address 1)) 0)))))
+           (values (append addresses-so-far (extract-addresses next-item 'address))))])
+    (begin
+      (printf "just-addresses: ~a~n" just-addresses)
+      (for/fold ([result (hash)])
+                ([next-address just-addresses])
+        (values
+         (hash-update result next-address (lambda (count-of-address) (+ count-of-address 1)) 0))))))
