@@ -19,9 +19,11 @@
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
     (for ([test-acct-name (list "tbhanson gmx" "tim at w-h")])
-      (let ([test-acct (hash-ref creds_hash test-acct-name)])
+      (let* ([test-acct (hash-ref creds_hash test-acct-name)]
+            [my-address (imap-email-account-credentials-mailaddress test-acct)])
+        (printf "my-address: ~a~n" my-address)
         (let ([fields (list #"from" #"date" #"to")]
-              [msg-count-to-examine 10])
+              [msg-count-to-examine 3])
           (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
             (begin
               (check-equal?
