@@ -16,30 +16,34 @@
       (for/first ([next-address (extract-addresses address-chain 'address)]
                   #:when (address-matches moi next-address))
         #t)))
-  
-  (let-values
-      ([(including-me
-         not-including-me)
+
+  (begin
+    (printf "(parse-to-address-statistics ~a ~a)~n" enumerable-of-email-address-strings my-address)
+    (let-values
+        ([(including-me
+           not-including-me)
                
-        (for/fold ([to-chains-including-me '()]
-                   [to-chains-not-including-me '()]
-                   )
-                  ;                 #:result (values to-chains-including-me to-chains-not-including-me)
-                  ([next-item enumerable-of-email-address-strings])
-          (if (includes-me? next-item)
-              (values (cons next-item to-chains-including-me ) to-chains-not-including-me)
-              (values to-chains-including-me (cons next-item to-chains-not-including-me ))))])
+          (for/fold ([to-chains-including-me '()]
+                     [to-chains-not-including-me '()]
+                     )
+                    ;                 #:result (values to-chains-including-me to-chains-not-including-me)
+                    ([next-item enumerable-of-email-address-strings])
+            (if (includes-me? next-item)
+                (values (cons next-item to-chains-including-me ) to-chains-not-including-me)
+                (values to-chains-including-me (cons next-item to-chains-not-including-me ))))])
 
-    (define (dispatch msg)
-      (cond
-        [(eq? msg 'including-me)
-         including-me]
+      (define (dispatch msg)
+        (cond
+          [(eq? msg 'including-me)
+           including-me]
         
-        [(eq? msg 'not-including-me)
-         not-including-me]
+          [(eq? msg 'not-including-me)
+           not-including-me]
         
-        [else (raise (format "error: i don't know how to ~a yet" msg))]))
+          [else (raise (format "error: i don't know how to ~a yet" msg))]))
     
-    dispatch))
+      dispatch))
+  )
 
 
+  

@@ -71,11 +71,14 @@
                                   [idx (in-range lo-index (+ hi-index 1))])
                          (let ([uid (first msg)]
                                [header (second msg)])
+                           ;(printf "header: ~a~n" header)
                            (let ([field-contents
                                   (with-handlers
                                       ([exn:fail?
                                         (lambda (e)
-                                          (format "??? (~a)" e))])
+                                          ;(format "??? (~a)" e)
+                                          "" ; treat, e.g., a missing cc: field as empty
+                                          )])
                                     (bytes->string/utf-8 (extract-field field header)))])
                              (begin
                                (printf "idx: ~a~n" idx)

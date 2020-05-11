@@ -3,7 +3,9 @@
 (require rackunit
          "imap-email-account-credentials.rkt"
          "connect-to-imap-account.rkt"
-         "parse-date-time-string-statistics.rkt")
+         "parse-date-time-string-statistics.rkt"
+         "parse-to-address-statistics.rkt"
+         )
 
 (require net/imap)
 (require net/head)
@@ -18,12 +20,17 @@
 ; from is still interesting and I think the next project will be looking at date sent collapsed into year or year-month, I suspect
 (let ([iniFilePath (default-ini-filepath)])
   (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
-    (for ([test-acct-name (list "tbhanson gmx" "tim at w-h")])
+    (for ([test-acct-name (list "tbhanson gmx" ;"tim at w-h"
+                                )])
       (let* ([test-acct (hash-ref creds_hash test-acct-name)]
             [my-address (imap-email-account-credentials-mailaddress test-acct)])
         (printf "my-address: ~a~n" my-address)
-        (let ([fields (list #"from" #"date" #"to")]
-              [msg-count-to-examine 3])
+        (let ([fields (list ; #"from"
+                            ; #"date"
+                            #"to"
+                            #"cc"
+                            )]
+              [msg-count-to-examine 10])
           (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
             (begin
               (check-equal?
@@ -60,9 +67,21 @@
                              (printf "(date-strings-by-parsing-pattern-stats 'date-strings-not-parsed):~n ~a~n"
                                      (date-strings-by-parsing-pattern-stats 'date-strings-not-parsed))
                              ))]
-                        [(eq? key #"to")
-                         (printf "under-test at ~a: ~a~n" key
-                                 (pretty-print (hash-ref under-test key)))]
+                        
+                        [(or
+                          (eq? key #"to")
+                          (eq? key #"cc"))
+                         (let ([to-strings-with-and-without-me
+                                (parse-to-address-statistics (hash-keys (hash-ref under-test key)) my-address)])
+                           (begin
+                             (printf "((~a) to-strings-with-and-without-me 'including-me): ~a~n"
+                                     key
+                                     (pretty-format (to-strings-with-and-without-me 'including-me)))
+                             (printf "((~a) to-strings-with-and-without-me 'not-including-me): ~a~n"
+                                     key
+                                     (pretty-format (to-strings-with-and-without-me 'not-including-me)))))]
+                             
+                        
                         [(eq? key #"from")
                          (printf "under-test at ~a: ~a~n" key
                                  (pretty-print (hash-ref under-test key)))]
