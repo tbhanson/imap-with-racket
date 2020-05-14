@@ -1,100 +1,16 @@
 #lang racket
 
 (require rackunit
+         net/imap
          "imap-email-account-credentials.rkt"
+
          "connect-to-imap-account.rkt"
          "parse-date-time-string-statistics.rkt"
          "parse-to-address-statistics.rkt"
          )
 
-(require net/imap)
-(require net/head)
 
 
-
-
-; compute some statistics for "INBOX" of account "tim at w-h"
-; NB: when I upped the count examined from 10 to 100 the real time spent was 3+ seconds, up from 3- seconds
-; when I upped it from 100 to 1000, time elapsed was about 4.4s
-; however, at 1000 I noticed that stats on "to" are not very interesting: I get all the different combinations incuding various spellings of myself
-; from is still interesting and I think the next project will be looking at date sent collapsed into year or year-month, I suspect
-(let ([iniFilePath (default-ini-filepath)])
-  (let ([creds_hash (read-email-account-credentials-hash-from-file-named iniFilePath)])
-    (for ([test-acct-name (list "tbhanson gmx" ;"tim at w-h"
-                                )])
-      (let* ([test-acct (hash-ref creds_hash test-acct-name)]
-            [my-address (imap-email-account-credentials-mailaddress test-acct)])
-        (printf "my-address: ~a~n" my-address)
-        (let ([fields (list ; #"from"
-                            ; #"date"
-                            #"to"
-                            #"cc"
-                            )]
-              [msg-count-to-examine 10])
-          (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
-            (begin
-              (check-equal?
-               (hash? under-test)
-               #t)
-              (check-equal?
-               (hash-count under-test)
-               (length fields))
-              (for ([f fields])
-                (check-equal?
-                 (hash-has-key? under-test f)
-                 #t))
-              ; for each main key the sum of all counts in its hash must equal the number of messages we looked at
-              (for ([f fields])
-                (let ([sub-hash (hash-ref under-test f)])
-                  (check-equal?
-                   (for/fold ([sum-counts 0])
-                             ([key (hash-keys sub-hash)])
-                     (values (+ sum-counts (hash-ref sub-hash key))))
-                   msg-count-to-examine)))
-
-              ; show what we have for now to help debug and understand
-              (for ([key (hash-keys under-test)])
-                (begin
-                  (printf "-------~n")
-                  (cond [(eq? key #"date")
-                         (let ([date-strings-by-parsing-pattern-stats
-                                (parse-date-time-string-statistics (hash-keys (hash-ref under-test #"date")))])
-                           (begin
-                             (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern) ~a~n"
-                                     (date-strings-by-parsing-pattern-stats 'show-counts-by-date-string-pattern))
-                             (printf "(date-strings-by-parsing-pattern-stats 'show-counts-by-year):~n ~a~n"
-                                     (date-strings-by-parsing-pattern-stats 'show-counts-by-year))
-                             (printf "(date-strings-by-parsing-pattern-stats 'date-strings-not-parsed):~n ~a~n"
-                                     (date-strings-by-parsing-pattern-stats 'date-strings-not-parsed))
-                             ))]
-                        
-                        [(or
-                          (eq? key #"to")
-                          (eq? key #"cc"))
-                         (let ([to-strings-with-and-without-me
-                                (parse-to-address-statistics (hash-keys (hash-ref under-test key)) my-address)])
-                           (begin
-                             (printf "((~a) to-strings-with-and-without-me 'including-me): ~a~n"
-                                     key
-                                     (pretty-format (to-strings-with-and-without-me 'including-me)))
-                             (printf "((~a) to-strings-with-and-without-me 'not-including-me): ~a~n"
-                                     key
-                                     (pretty-format (to-strings-with-and-without-me 'not-including-me)))))]
-                             
-                        
-                        [(eq? key #"from")
-                         (printf "under-test at ~a: ~a~n" key
-                                 (pretty-print (hash-ref under-test key)))]
-                        [else
-                         (printf "oops! no path for key: ~a~n" key)]
-                        
-                        )))
-
-              )))))))
-
-  
-        
-        
 
   ; second attempt after getting some clues
   ;   https://groups.google.com/forum/m/?hl=en#!topic/racket-users/hpwQTdDoMlw
@@ -118,14 +34,7 @@
         
           (let ([test_data
                  (list
-                  ;(list "tim at w-h" "INBOX")
-                  ;(list "some account name in iniFile" "INBOX" ) ; --> imap-connect: username or password rejected by server: (NO authentication failed)
-                  ;(list "a gmail accountname" 993 "INBOX"  #t #f) ; --> imap-connect: username or password rejected by server: (NO |[ALERT]| Please log in via your web browser: https://support.google.com/mail/accounts/answer/78754 (Failure))
-                
-                  ;(list "some other account name in iniFile" "INBOX") ; --> attempted (secure) imap-connection to ... at mail.tigertech.net; imap-connection? says #t
-                  ;(list "yet other account name in iniFile" "INBOX") ; --> attempted (secure) imap-connection to ... at posteo.de; imap-connection? says #t
-                  )])
-          
+                  (list "tim at w-h" "INBOX"))])
             (for ([test-item test_data])
               (printf "test-item: ~a~n" test-item)
               (let ([test-acct-name (car test-item)]
@@ -142,26 +51,4 @@
                          (imap-connection? imap-conn)
                          #t)
                         (let ([msg-count (imap-messages imap-conn)])
-                          (let ([first-N (min 5 msg-count)])
-                            (begin
-                              (printf "there are ~a messages in folder ~a of account ~a~n" msg-count test-folder test-acct-name)
-                              (printf "we will look at the first ~a of them~n" first-N)
-                              (let ([first-N-messages (imap-get-messages imap-conn (stream->list (in-range 1 first-N)) '(uid header body flags))])
-                                (begin
-                                  (for ([s first-N-messages])
-                                    (let ([uid (first s)]
-                                          [header (second s)])
-                                      (let ([from (bytes->string/utf-8 (extract-field #"from" header))]
-                                            [to (bytes->string/utf-8 (extract-field #"to" header))]
-                                            [subject (bytes->string/utf-8 (extract-field #"subject" header))]
-                                            [date (bytes->string/utf-8 (extract-field #"date" header))])
-                                        (printf "message id: ~a~n" uid)
-                                        (printf "  from: ~a~n" from)
-                                        (printf "  to ~a~n" to)
-                                        (printf "  subject ~a~n" subject)
-                                        (printf "  date ~a~n" date))))
-                                  (imap-disconnect imap-conn))))))
-                        )))))))))))
-                      
-
-  
+                          (printf "msg-count: ~a~n" msg-count)))))))))))))
