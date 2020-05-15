@@ -6,6 +6,27 @@
   #:prefab
   )
 
+(provide
+ ; automatic methods from struct
+ imap-email-account-credentials
+ imap-email-account-credentials?
+ 
+ imap-email-account-credentials-accountname
+ imap-email-account-credentials-hostname
+ imap-email-account-credentials-mailaddress
+ imap-email-account-credentials-password
+
+ ; reading one or several
+ (contract-out [read-one-email-account-credential (-> port? imap-email-account-credentials?)]
+               [read-one-email-account-credentials-from-file-named (-> string? imap-email-account-credentials?)]
+               [read-email-account-credentials-hash-from-port (-> port? hash?)]
+               [read-email-account-credentials-hash-from-file-named (-> string? hash?)]
+               ; convenience
+               [default-ini-filepath (-> path?)]
+               )
+ )
+
+
 ; keep personal account set up and secrets in a standard place
 (define (default-ini-filepath)
   (let ([iniFileName ".myImapCreds"])
@@ -40,23 +61,5 @@
      (open-input-file filename))))
    
   
-(provide
- ; automatic methods from struct
- imap-email-account-credentials
- imap-email-account-credentials?
- 
- imap-email-account-credentials-accountname
- imap-email-account-credentials-hostname
- imap-email-account-credentials-mailaddress
- imap-email-account-credentials-password
 
- ; reading one or several
- read-one-email-account-credential
- read-one-email-account-credentials-from-file-named
- read-email-account-credentials-hash-from-port
- read-email-account-credentials-hash-from-file-named
-
- ; convenience
- default-ini-filepath
- )
  
