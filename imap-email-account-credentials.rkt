@@ -18,9 +18,9 @@
 
  ; reading one or several
  (contract-out [read-one-email-account-credential (-> port? imap-email-account-credentials?)]
-               [read-one-email-account-credentials-from-file-named (-> string? imap-email-account-credentials?)]
+               [read-one-email-account-credentials-from-file-named (-> (or/c string? path?) imap-email-account-credentials?)]
                [read-email-account-credentials-hash-from-port (-> port? hash?)]
-               [read-email-account-credentials-hash-from-file-named (-> string? hash?)]
+               [read-email-account-credentials-hash-from-file-named (-> (or/c string? path?) hash?)]
                ; convenience
                [default-ini-filepath (-> path?)]
                )
