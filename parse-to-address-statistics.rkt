@@ -26,7 +26,6 @@
           (for/fold ([to-chains-including-me '()]
                      [to-chains-not-including-me '()]
                      )
-                    ;                 #:result (values to-chains-including-me to-chains-not-including-me)
                     ([next-item enumerable-of-email-address-strings])
             (if (includes-me? next-item)
                 (values (cons next-item to-chains-including-me ) to-chains-not-including-me)

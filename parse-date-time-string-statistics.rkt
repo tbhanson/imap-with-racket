@@ -15,9 +15,9 @@
   (for/fold ([addresses-by-patterns
               (hash)]
              #:result addresses-by-patterns)
-            ([mail-address enumberable-of-date-time-strings])
-    (let ([key (supported-pattern-which-parses-date-time-string? mail-address)])
-      (values (hash-update addresses-by-patterns key (lambda (mail-addresses-at-key-so-far) (cons mail-address mail-addresses-at-key-so-far)) '())))))
+            ([date-time-string enumberable-of-date-time-strings])
+    (let ([key (supported-pattern-which-parses-date-time-string? date-time-string)])
+      (values (hash-update addresses-by-patterns key (lambda (date-time-strings-at-key-so-far) (cons date-time-string date-time-strings-at-key-so-far)) '())))))
 
            
 

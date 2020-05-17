@@ -4,7 +4,9 @@
          rackunit/text-ui
 
          gregor
-         "mail-digest.rkt")
+         net/head
+         "mail-digest.rkt"
+         )
 
 (run-tests
   (test-suite
@@ -30,6 +32,13 @@
         (under-test 'date)
         (datetime
          2014 10 9 18 23 20)
+        )
+
+       (check-equal?
+        (under-test 'all-to)
+        (for/fold ([so-far (set)])
+                  ([next-to-part (list to cc bcc)])
+          (values (set-union so-far (list->set  (extract-addresses next-to-part 'address)))))
         )
        )
      )

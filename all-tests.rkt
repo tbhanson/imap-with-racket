@@ -3,6 +3,7 @@
 (require
   "test-imap-email-account-credentials.rkt"
   "test-main-mail-header-parts.rkt"
+  "test-mail-digest.rkt"
   "test-parse-mail-dates.rkt"
   "test-parse-date-time-string-statistics.rkt"
 
