@@ -29,7 +29,7 @@
                             #"to"
                             #"cc"
                             )]
-              [msg-count-to-examine 10])
+              [msg-count-to-examine 1])
           (let ([under-test  (time (collect-some-imap-account-stats test-acct "INBOX" (cons 1 msg-count-to-examine) fields))])
             (begin
               (check-equal?

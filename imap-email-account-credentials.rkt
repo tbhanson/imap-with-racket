@@ -8,7 +8,7 @@
 
 (provide
  ; automatic methods from struct
- imap-email-account-credentials
+ (contract-out [imap-email-account-credentials (-> string? string? string? string? imap-email-account-credentials?)])
  imap-email-account-credentials?
  
  imap-email-account-credentials-accountname

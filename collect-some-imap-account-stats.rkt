@@ -45,6 +45,7 @@
           (let* ([range-of-messages (imap-get-messages imap-conn (stream->list (in-range lo-index (+ hi-index 1))) '(uid header))])
             (for/fold ([result (make-immutable-hash)])
                       ([field header-fields])
+              (printf "field: ~a~n" field)
               (values (hash-set
                        result
                        field 
