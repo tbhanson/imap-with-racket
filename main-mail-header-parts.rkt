@@ -2,7 +2,7 @@
 
 ; a structure to hold the basics we need
 (struct main-mail-header-parts
-  (mail-id date-string from to Cc Bcc subj)
+  (mail-id date-string from to cc bcc subj)
   #:prefab
   )
 
@@ -14,8 +14,8 @@
   [main-mail-header-parts-date-string (-> main-mail-header-parts? string?)]
   [main-mail-header-parts-from (-> main-mail-header-parts? string?)]
   [main-mail-header-parts-to (-> main-mail-header-parts? string?)]
-  [main-mail-header-parts-Cc (-> main-mail-header-parts? string?)]
-  [main-mail-header-parts-Bcc (-> main-mail-header-parts? string?)]
+  [main-mail-header-parts-cc (-> main-mail-header-parts? string?)]
+  [main-mail-header-parts-bcc (-> main-mail-header-parts? string?)]
   [main-mail-header-parts-subj (-> main-mail-header-parts? string?)]
   )
  )
