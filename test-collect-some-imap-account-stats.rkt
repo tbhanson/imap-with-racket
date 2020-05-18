@@ -22,7 +22,7 @@
     (for ([test-acct-name (list "tbhanson gmx" ;"tim at w-h"
                                 )])
       (let* ([test-acct (hash-ref creds_hash test-acct-name)]
-            [my-address (imap-email-account-credentials-mailaddress test-acct)])
+             [my-address (imap-email-account-credentials-mailaddress test-acct)])
         (printf "my-address: ~a~n" my-address)
         (let ([fields (list #"from"
                             #"date"

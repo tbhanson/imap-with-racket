@@ -15,7 +15,7 @@
    (let ([id 123]
          [date-string "9 Oct 2014 18:23:20 -0000"]
          [from "do-not-reply@inbound.readersupportednews.org"]
-         [to "tbhanson@gmx.de"]
+         [to "tbhanson@gmx.de,clem@kadiddlehopper.org"]
          [cc "bogsat3@googlegroups.com"]
          [bcc ""]
          [subj "some subject"])

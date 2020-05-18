@@ -18,4 +18,17 @@
   [main-mail-header-parts-bcc (-> main-mail-header-parts? string?)]
   [main-mail-header-parts-subj (-> main-mail-header-parts? string?)]
   )
+ main-mail-header-part-labels
+ main-mail-header-part-imap-symbols
  )
+
+(define main-mail-header-part-labels
+  (list #"date" #"from" #"to" #"cc" #"bcc" #"subj"))
+
+(define main-mail-header-part-imap-symbols
+  '(uid header))
+
+;(define (mail-header->main-mail-header-parts mail-header)
+;  (main-mail-header-parts
+   
+

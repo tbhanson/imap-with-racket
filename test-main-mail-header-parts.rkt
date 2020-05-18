@@ -6,8 +6,11 @@
          "main-mail-header-parts.rkt")
 
 (run-tests
+ (test-suite
+  "outer"
+ 
   (test-suite
-   "main-mail-header-parts"
+   "main-mail-header-parts struct basics"
 
    (let ([id 123]
          [date-string "9 Oct 2014 18:23:20 -0000"]
@@ -60,4 +63,19 @@
        )
      )
    )
+  
+  (test-suite
+   "main-mail-header-parts constants"
+   (check-equal?
+    (null?
+     (member #"bcc" main-mail-header-part-labels ))
+    #f)
+
+   (check-equal?
+    main-mail-header-part-imap-symbols
+    '(uid header)
+    )
+   )
   )
+ )
+ 

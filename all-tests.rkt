@@ -13,5 +13,5 @@
     ;  "test-connect-to-imap-account.rkt"
 
   "test-collect-some-imap-account-stats.rkt"
-
+  "test-range-of-messages.rkt"
   )
