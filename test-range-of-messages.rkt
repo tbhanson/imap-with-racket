@@ -20,11 +20,12 @@
        (for ([test-acct-name (list "tbhanson gmx" ;"tim at w-h"
                                    )])
          (let ([email-account-credential (hash-ref creds_hash test-acct-name)]
-               [msg-count-to-examine 10])
+               [msg-count-to-examine 1])
            (let ([under-test
                   (time
                    (get-range-of-messages email-account-credential mail-folder (cons 1 msg-count-to-examine))
                    )])
+             (printf "under-test: ~a~n" under-test)
              (check-equal?
               (length under-test)
               msg-count-to-examine))))))))
