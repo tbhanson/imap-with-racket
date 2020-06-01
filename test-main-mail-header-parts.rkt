@@ -3,7 +3,8 @@
 (require rackunit
          rackunit/text-ui
          
-         "main-mail-header-parts.rkt")
+         "main-mail-header-parts.rkt"
+         racket/serialize)
 
 (run-tests
  (test-suite
@@ -78,34 +79,33 @@
    )
 
   (test-suite
-   "main-mail-header-parts constants"
-   (check-equal?
-    (null?
-     (member #"bcc" main-mail-header-part-labels ))
-    #f)
-   )
-
-  (test-suite
    "mail-header->main-mail-header-parts"
-   (let ([name-of-file-containing-test-messages "test-data/data-raw-mail-bits.rkt"])
-     (let ([test-msg-list
+   (let ([name-of-file-containing-test-messages
+          "test-data/one-test-msg-header-serialized.rkt"
+          ])
+     (let ([test-msg-serialized
             (read (open-input-string (file->string name-of-file-containing-test-messages)))])
-       (check-equal?
-        (list? test-msg-list)
-        #t)
-       (check-equal?
-        (length test-msg-list)
-        2)
-       (let ([test-msg-maybe (cadr test-msg-list)])
-         (let ([main-mail-header-parts-maybe (mail-header->main-mail-header-parts test-msg-maybe)])
+       (let ([test-msg (deserialize test-msg-serialized)])
+         (check-equal?
+          (list? test-msg)
+          #t)
+         (check-equal?
+          (length test-msg)
+          2)
+         (check-equal?
+          (integer? (car test-msg))
+          #t)
+         (let ([main-mail-header-parts-maybe (mail-header->main-mail-header-parts test-msg)])
            ; redundant I guess because of contracts?
            (check-equal?
             (main-mail-header-parts? main-mail-header-parts-maybe)
             #t)
-           ))
-       ))
+           ;(printf "main-mail-header-parts-maybe: ~a~n" main-mail-header-parts-maybe)
+           )
+         )
+       )
+     )
    )
   )
  )
 
- 

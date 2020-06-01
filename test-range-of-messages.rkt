@@ -6,6 +6,7 @@
          "imap-email-account-credentials.rkt"
 
          "range-of-messages.rkt"
+          ;racket/serialize
          )
 
 
@@ -25,7 +26,12 @@
                   (time
                    (get-range-of-messages email-account-credential mail-folder (cons 1 msg-count-to-examine))
                    )])
-             (printf "under-test: ~a~n" under-test)
+             ;(printf "under-test: ~a~n" under-test)
              (check-equal?
               (length under-test)
-              msg-count-to-examine))))))))
+              msg-count-to-examine)
+             ;(printf "(serialize (car under-test)): ~a~n" (serialize (car under-test)))
+             ;(with-output-to-file "test-data/try-one.rkt"
+             ;  (lambda () (write (serialize (car under-test)))))
+             
+             )))))))
