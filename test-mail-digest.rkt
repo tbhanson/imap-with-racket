@@ -6,11 +6,17 @@
          gregor
          net/head
          "mail-digest.rkt"
+         "main-mail-header-parts.rkt"
+
+         racket/serialize
          )
 
 (run-tests
+ (test-suite
+  "all"
+   
   (test-suite
-   "mail-digest"
+   "mail-digest-from-fields"
 
    (let ([id 123]
          [date-string "9 Oct 2014 18:23:20 -0000"]
@@ -20,7 +26,7 @@
          [bcc ""]
          [subj "some subject"])
      (let ([under-test
-            (mail-digest
+            (mail-digest-from-fields
              id
              date-string
              from
@@ -43,5 +49,43 @@
        )
      )
    )
-  )
 
+  (test-suite
+   "mail-digest-from-header-parts"
+
+   (let ([name-of-file-containing-test-messages
+          "test-data/one-test-msg-header-serialized.rkt"
+          ])
+     (let ([test-msg
+            (deserialize 
+             (read (open-input-string (file->string name-of-file-containing-test-messages))))])
+       (let ([main-mail-header-parts-maybe (mail-header->main-mail-header-parts test-msg)])
+         (let ([under-test (mail-digest-from-header-parts main-mail-header-parts-maybe)])
+           (check-equal?
+            (under-test 'date)
+            (datetime
+             2014 10 9 18 23 20)
+            )
+
+           (check-equal?
+            (under-test 'parts)
+            (main-mail-header-parts
+             50817
+             "9 Oct 2014 18:23:20 -0000"
+             "\"Reader Supported News\" <do-not-reply@inbound.readersupportednews.org>"
+             "uhclem@gmx.de"
+             ""
+             ""
+             "")  
+            )
+           
+           )
+         )
+       )
+     
+     
+     )
+   
+   )
+  )
+ )
