@@ -23,7 +23,7 @@
   [main-mail-header-parts-subj (-> main-mail-header-parts? string?)]
 
   ; convenience converter
-  [mail-header->main-mail-header-parts (-> list? main-mail-header-parts?)]
+  [mail-header->main-mail-header-parts (-> (and/c pair? list?) main-mail-header-parts?)]
   )
  
  ; constants we might need

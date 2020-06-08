@@ -8,6 +8,9 @@
          )
 
 
+; think about a contract that is more explicit about what is returned
+; https://docs.racket-lang.org/guide/contracts-first.html
+
 (provide
  (contract-out 
   [get-range-of-messages
