@@ -29,5 +29,6 @@
             ; redundant because of contracts
             (check-equal?
              (mailbox-digest? under-test)
-             #t))))))))
+             #t)
+            (save-mailbox-digest under-test))))))))
               

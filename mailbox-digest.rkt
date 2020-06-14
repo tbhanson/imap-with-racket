@@ -5,10 +5,29 @@
   "connect-to-imap-account.rkt"
   net/imap
   "main-mail-header-parts.rkt"
+  gregor
+  racket/serialize
   )
 
+(define (default-digest-folder-path)
+  (let ([digestFolderName ".myMailDigests"])
+    (let ([digestFolderPath (build-path (find-system-path 'home-dir) digestFolderName)])
+      digestFolderPath)))
+
+(define (mail-digest-file-name mailbox-digest)
+  (let ([file-name ; make a name with datetime, e-mail address, and folder name
+         (format "mailbox-digest_~a_~a_~a.ser"
+                 (~t 
+                  (mailbox-digest-timestamp mailbox-digest)
+                  "yyyy-MM-dd_HH:mm:ss")
+                 (mailbox-digest-mail-address mailbox-digest)
+                 (mailbox-digest-folder-name mailbox-digest))])
+    (let ([full-file-path
+           (build-path (default-digest-folder-path) file-name)])
+      full-file-path)))
+
 (struct mailbox-digest
-  (mail-address folder-name uid-validity index-range mail-headers)
+  (mail-address folder-name uid-validity index-range mail-headers timestamp)
   #:prefab
   )
 
@@ -16,23 +35,25 @@
 (provide
  (contract-out
   ; struct automatics
-  [mailbox-digest (-> string? string? integer? pair? list? mailbox-digest?)]
+  [mailbox-digest (-> string? string? integer? pair? list? datetime? mailbox-digest?)]
   [mailbox-digest? (-> any/c boolean?)]
   [mailbox-digest-mail-address (-> mailbox-digest? string?)]
   [mailbox-digest-folder-name (-> mailbox-digest? string?)]
   [mailbox-digest-uid-validity (-> mailbox-digest? integer?)]
   [mailbox-digest-index-range (-> mailbox-digest? pair?)]
   [mailbox-digest-mail-headers (-> mailbox-digest? list?)]
+  [mailbox-digest-timestamp (-> mailbox-digest? datetime?)]
 
   ;
   [get-mailbox-digest (-> imap-email-account-credentials? string? pair? mailbox-digest?)]
-
+  [save-mailbox-digest (-> mailbox-digest? any/c)]
  ))
 
 ; 
 (define (get-mailbox-digest mail-account-credential folder-name item-index-range)
   (let ([imap-conn
-         (securely-connect-to-imap-account mail-account-credential folder-name)])
+         (securely-connect-to-imap-account mail-account-credential folder-name)]
+        [now-timestamp (now)])
     (let ([msg-count (imap-messages imap-conn)]
           [uid-validity (imap-uidvalidity imap-conn)]
           [lo-index (car item-index-range)])
@@ -52,4 +73,15 @@
              folder-name
              uid-validity
              item-index-range
-             range-of-message-headers)))))))
+             range-of-message-headers
+             now-timestamp)))))))
+
+; save serialized form of a mailbox-digest as a snapshot
+(define (save-mailbox-digest mailbox-digest)
+  (let ([full-file-path
+         (mail-digest-file-name mailbox-digest)])
+    (let ([out (open-output-file full-file-path)])
+      (write (serialize mailbox-digest) out)
+      (close-output-port out))))
+                 
+                 
