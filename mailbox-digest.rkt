@@ -46,7 +46,8 @@
 
   ;
   [get-mailbox-digest (-> imap-email-account-credentials? string? pair? mailbox-digest?)]
-  [save-mailbox-digest (-> mailbox-digest? any/c)]
+  [save-mailbox-digest (-> mailbox-digest? path?)]
+  [load-mailbox-digest-from-file (-> path? mailbox-digest?)]
  ))
 
 ; 
@@ -76,12 +77,17 @@
              range-of-message-headers
              now-timestamp)))))))
 
-; save serialized form of a mailbox-digest as a snapshot
+; save serialized form of a mailbox-digest as a snapshot, return full path of file name
 (define (save-mailbox-digest mailbox-digest)
   (let ([full-file-path
          (mail-digest-file-name mailbox-digest)])
     (let ([out (open-output-file full-file-path)])
       (write (serialize mailbox-digest) out)
-      (close-output-port out))))
-                 
+      (close-output-port out))
+    full-file-path))
+
+(define (load-mailbox-digest-from-file digest-file-path)
+  (let ([in (open-input-file digest-file-path)])
+    (deserialize (read in))))
+  
                  

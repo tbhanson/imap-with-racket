@@ -21,7 +21,7 @@
           [folder-name "INBOX"]
           [test-acct-name "tbhanson gmx"]) ;"tim at w-h"
       (let ([mail-account-credential (hash-ref creds_hash test-acct-name)]
-            [msg-count-to-examine 10])
+            [msg-count-to-examine 10000])
         (let ([msg-index-range (cons 1 msg-count-to-examine)])
           (let ([under-test
                  (time
@@ -30,5 +30,13 @@
             (check-equal?
              (mailbox-digest? under-test)
              #t)
-            (save-mailbox-digest under-test))))))))
+            (let ([digest-file-path
+                   (time (save-mailbox-digest under-test))])
+              (let ([clone-we-hope
+                     (time (load-mailbox-digest-from-file digest-file-path))])
+                (check-equal?
+                 (mailbox-digest? clone-we-hope)
+                 #t)
+                )))))))))
+                
               
