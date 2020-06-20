@@ -12,6 +12,22 @@ For now credentials are kept in ~/.myImapCreds in a format such as found in
 
 - - - -
 
+
+2020-06-17
+So, we should be able to load entire contents of inbox(es) and save them locally as “digests”, which we can load without going on-line to practice whatever:
+- statistic computation
+- rule testing (what do we want to delete…)
+
+2020-06-01
+- next steps / goals:
+    - test with local header data 
+    - (generate same by
+        - reading a bunch of mails, 
+        - extracting header bits only, 
+        - serializing these, 
+        - writing results to one or more  test files
+        )
+
 2020-05-13
 
 some immediate next goals

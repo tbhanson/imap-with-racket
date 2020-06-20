@@ -68,7 +68,7 @@
                   (imap-get-messages
                    imap-conn
                    (stream->list (in-range lo-index (+ hi-index 1)))
-                   '(uid header)))]) ; think about whether we also need flags
+                   '(uid header flags)))]) ; think about whether we also need flags
             (mailbox-digest
              (imap-email-account-credentials-mailaddress mail-account-credential)
              folder-name
