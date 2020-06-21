@@ -48,7 +48,9 @@
       (bytes->string/utf-8 (extract-field field header))))
   
   (let ([uid (first msg)]
-        [header (second msg)])
+        [header (second msg)]
+        ;[flags (third msg)]
+        )
     ;(printf "header: ~a~n" header)
     (let ([mail-id uid]
           [date-string (field-contents #"date" header)]

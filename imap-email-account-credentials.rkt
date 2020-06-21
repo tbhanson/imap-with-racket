@@ -50,7 +50,7 @@
   (let ((account-list (read port)))
     (for/fold ([result (make-immutable-hash)])
               ([account account-list])
-      (let ((key (imap-email-account-credentials-accountname account)))
+      (let ([key (imap-email-account-credentials-accountname account)])
         (values (hash-set result key account))))))
 
 (define (read-email-account-credentials-hash-from-file-named filename)

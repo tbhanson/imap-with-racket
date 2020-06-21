@@ -11,9 +11,11 @@
   [mail-digest-from-header-parts (-> main-mail-header-parts? any/c)]
   ))
 
+
 (define (mail-digest-from-fields mail-id date-string from to cc bcc subj)
   (let ([parts (main-mail-header-parts mail-id date-string from to cc bcc subj)])
     (mail-digest-from-header-parts parts)))
+
 
 (define (mail-digest-from-header-parts parts)
   (let ([date (possible-parse-date-time-string (main-mail-header-parts-date-string parts))]

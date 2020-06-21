@@ -11,7 +11,9 @@ For now credentials are kept in ~/.myImapCreds in a format such as found in
   test-data/list-of-test-imap-email-account-credentials.rkt
 
 - - - -
-
+2020-06-20
+ - how hard is it to refactor by moving RnD source (pretty much all of this) into sub-directories (say source and test?) ?
+ - think about header flags
 
 2020-06-17
 So, we should be able to load entire contents of inbox(es) and save them locally as “digests”, which we can load without going on-line to practice whatever:
