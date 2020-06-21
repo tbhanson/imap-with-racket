@@ -16,15 +16,20 @@
    (check-equal?
     (anonymize-one-string "tbhanson")
     "uhclem")
+
+   (check-equal?
+    (anonymize-one-string "tbhanson@weber-hanson.com")
+    "uhclem@some-domain.com")
    )
 
+  
   (test-suite
    "default-anonymizer-rules-filepath"
    (check-equal?
     (file-exists?
      (default-anonymizer-rules-filepath))
-     #t
+    #t
     )
    )
-
+  
   ))

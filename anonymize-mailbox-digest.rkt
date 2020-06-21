@@ -30,7 +30,10 @@
   (load-default-anonymizer-rules))
 
 (define (anonymize-one-string in)
-  (hash-ref default-rules in))
+  (for/fold ([result in])
+            ([before-value (hash-keys default-rules)])
+    (values (string-replace result before-value
+                            (hash-ref default-rules before-value)))))
 
 
 
