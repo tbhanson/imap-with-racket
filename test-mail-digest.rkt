@@ -9,6 +9,7 @@
          "main-mail-header-parts.rkt"
 
          racket/serialize
+         net/imap
          )
 
 (run-tests
@@ -21,10 +22,11 @@
    (let ([id 123]
          [date-string "9 Oct 2014 18:23:20 -0000"]
          [from "do-not-reply@inbound.readersupportednews.org"]
-         [to "tbhanson@gmx.de,clem@kadiddlehopper.org"]
+         [to "uhClem@gmx.de,clem@kadiddlehopper.org"]
          [cc "bogsat3@googlegroups.com"]
          [bcc ""]
-         [subj "some subject"])
+         [subj "some subject"]
+         [flags (map symbol->imap-flag (list 'seen 'answered))])
      (let ([under-test
             (mail-digest-from-fields
              id
@@ -33,7 +35,8 @@
              to
              cc
              bcc
-             subj)])
+             subj
+             flags)])
        (check-equal?
         (under-test 'date)
         (datetime
@@ -54,7 +57,7 @@
    "mail-digest-from-header-parts"
 
    (let ([name-of-file-containing-test-messages
-          "test-data/one-test-msg-header-serialized.rkt"
+          "test-data/another-test-msg-header-serialized.rkt"
           ])
      (let ([test-msg
             (deserialize 
@@ -73,10 +76,12 @@
              50817
              "9 Oct 2014 18:23:20 -0000"
              "\"Reader Supported News\" <do-not-reply@inbound.readersupportednews.org>"
-             "uhclem@gmx.de"
+             "uhClem@gmx.de"
              ""
              ""
-             "")  
+             ""
+             (map symbol->imap-flag (list 'seen))
+             )  
             )
            
            )

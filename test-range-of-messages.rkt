@@ -6,7 +6,7 @@
          "imap-email-account-credentials.rkt"
 
          "range-of-messages.rkt"
-          ;racket/serialize
+          racket/serialize
          )
 
 
@@ -30,8 +30,9 @@
              (check-equal?
               (length under-test)
               msg-count-to-examine)
-             ;(printf "(serialize (car under-test)): ~a~n" (serialize (car under-test)))
-             ;(with-output-to-file "test-data/try-one.rkt"
-             ;  (lambda () (write (serialize (car under-test)))))
+             ; i used this to get test data
+;             (printf "(serialize (car under-test)): ~a~n" (serialize (car under-test)))
+;             (with-output-to-file "test-data/try-one.rkt"
+;               (lambda () (write (serialize (car under-test)))))
              
              )))))))

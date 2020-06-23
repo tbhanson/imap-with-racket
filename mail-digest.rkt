@@ -7,13 +7,13 @@
 
 (provide
  (contract-out
-  [mail-digest-from-fields (-> integer? string? string? string? string? string? string? any/c)]
+  [mail-digest-from-fields (-> integer? string? string? string? string? string? string? list? any/c)]
   [mail-digest-from-header-parts (-> main-mail-header-parts? any/c)]
   ))
 
 
-(define (mail-digest-from-fields mail-id date-string from to cc bcc subj)
-  (let ([parts (main-mail-header-parts mail-id date-string from to cc bcc subj)])
+(define (mail-digest-from-fields mail-id date-string from to cc bcc subj flags)
+  (let ([parts (main-mail-header-parts mail-id date-string from to cc bcc subj flags)])
     (mail-digest-from-header-parts parts)))
 
 
@@ -21,7 +21,8 @@
   (let ([date (possible-parse-date-time-string (main-mail-header-parts-date-string parts))]
         [to-addrs (extract-addresses (main-mail-header-parts-to parts) 'address)]
         [cc-addrs (extract-addresses (main-mail-header-parts-cc parts) 'address)]
-        [bcc-addrs (extract-addresses (main-mail-header-parts-bcc parts) 'address)])
+        [bcc-addrs (extract-addresses (main-mail-header-parts-bcc parts) 'address)]
+        [flags (main-mail-header-parts-flags parts)])
     (let ([all-to-addrs
            (for/fold ([so-far (set)])
                      ([next-to-part (list to-addrs cc-addrs bcc-addrs)])

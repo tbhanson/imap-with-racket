@@ -5,6 +5,7 @@
          net/head
          "imap-email-account-credentials.rkt"
          "connect-to-imap-account.rkt"
+         "main-mail-header-parts.rkt"
          )
 
 
@@ -39,5 +40,5 @@
           (printf "there are ~a messages in folder ~a of account ~a~n" msg-count mail-folder (imap-email-account-credentials-accountname email-account-credential))
           ;(assert (<= lo-index msg-count) (format "autschn! lo-index ~a is larger than msg-count ~a~n" lo-index msg-count))
           (printf "we will look at those indexed ~a to ~a~n" lo-index hi-index)
-          (let ([range-of-messages (imap-get-messages imap-conn (stream->list (in-range lo-index (+ hi-index 1))) '(uid header))])
+          (let ([range-of-messages (imap-get-messages imap-conn (stream->list (in-range lo-index (+ hi-index 1))) main-mail-header-part-imap-symbols)])
             range-of-messages))))))

@@ -9,7 +9,9 @@
 
 (provide
  (contract-out
-  [gather-message-headers (-> string? string? integer? (and/c pair? list?))]
+  [gather-message-headers (-> string? string? integer?
+                              (and/c pair? list?) ; which means non-empty list?
+                              )]
   ))
 
 ; think about how to (partially) mirror mail headers from servers to local

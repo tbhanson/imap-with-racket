@@ -4,14 +4,18 @@
   "test-imap-email-account-credentials.rkt"
   "test-main-mail-header-parts.rkt"
   "test-mail-digest.rkt"
+  "test-mailbox-digest.rkt"
   "test-parse-mail-dates.rkt"
   "test-parse-date-time-string-statistics.rkt"
 
   "test-parse-from-address-statistics.rkt"
   "test-parse-to-address-statistics.rkt"
 
-    ;  "test-connect-to-imap-account.rkt"
+  ;  "test-connect-to-imap-account.rkt"
 
   "test-collect-some-imap-account-stats.rkt"
   "test-range-of-messages.rkt"
+  "test-anonymize-mailbox-digest.rkt"
+  ; "test-gather-message-headers.rkt"
+  ; "test-range-of-messages.rkt"
   )
