@@ -5,31 +5,17 @@
   "connect-to-imap-account.rkt"
   net/imap
   "main-mail-header-parts.rkt"
+  "mail-digest.rkt"
+
   gregor
   racket/serialize
   )
-
-(define (default-digest-folder-path)
-  (let ([digestFolderName ".myMailDigests"])
-    (let ([digestFolderPath (build-path (find-system-path 'home-dir) digestFolderName)])
-      digestFolderPath)))
-
-(define (mail-digest-file-name mailbox-digest)
-  (let ([file-name ; make a name with datetime, e-mail address, and folder name
-         (format "mailbox-digest_~a_~a_~a.ser"
-                 (~t 
-                  (mailbox-digest-timestamp mailbox-digest)
-                  "yyyy-MM-dd_HH:mm:ss")
-                 (mailbox-digest-mail-address mailbox-digest)
-                 (mailbox-digest-folder-name mailbox-digest))])
-    (let ([full-file-path
-           (build-path (default-digest-folder-path) file-name)])
-      full-file-path)))
 
 (struct mailbox-digest
   (mail-address folder-name uid-validity index-range mail-headers timestamp)
   #:prefab
   )
+
 
 ; 
 (provide
@@ -44,10 +30,19 @@
   [mailbox-digest-mail-headers (-> mailbox-digest? list?)]
   [mailbox-digest-timestamp (-> mailbox-digest? datetime?)]
 
-  ;
+  ; loading from imap
   [get-mailbox-digest (-> imap-email-account-credentials? string? pair? mailbox-digest?)]
+  ; saving to / loading from file
   [save-mailbox-digest (-> mailbox-digest? path?)]
   [load-mailbox-digest-from-file (-> path? mailbox-digest?)]
+  ; file support
+  [default-digest-folder-path (-> path?)]
+  [mail-digest-file-name (-> string? path?)]
+  
+  ; other
+  [mailbox-digest-count (-> mailbox-digest? integer?)]
+  [mailbox-digest-mail-digests-by-uid (-> mailbox-digest? hash?)]
+  [mailbox-digest-mailids-by-from-addr (-> mailbox-digest? hash?)]
  ))
 
 ; 
@@ -89,5 +84,43 @@
 (define (load-mailbox-digest-from-file digest-file-path)
   (let ([in (open-input-file digest-file-path)])
     (deserialize (read in))))
-  
-                 
+
+(define (default-digest-folder-path)
+  (let ([digestFolderName ".myMailDigests"])
+    (let ([digestFolderPath (build-path (find-system-path 'home-dir) digestFolderName)])
+      digestFolderPath)))
+
+(define (mail-digest-file-name mailbox-digest)
+  (let ([file-name ; make a name with datetime, e-mail address, and folder name
+         (format "mailbox-digest_~a_~a_~a.ser"
+                 (~t 
+                  (mailbox-digest-timestamp mailbox-digest)
+                  "yyyy-MM-dd_HH:mm:ss")
+                 (mailbox-digest-mail-address mailbox-digest)
+                 (mailbox-digest-folder-name mailbox-digest))])
+    (let ([full-file-path
+           (build-path (default-digest-folder-path) file-name)])
+      full-file-path)))
+
+
+(define (mailbox-digest-count mailbox-digest)
+  (length (mailbox-digest-mail-headers mailbox-digest)))
+
+(define (mailbox-digest-mail-digests-by-uid mailbox-digest)
+  (for/fold ([result (make-immutable-hash)])
+            ([mail-header (mailbox-digest-mail-headers mailbox-digest)])
+    (values (hash-set result (main-mail-header-parts-mail-id mail-header)
+                      (mail-digest-from-header-parts mail-header)))))
+
+(define (mailbox-digest-mailids-by-from-addr mailbox-digest)
+  (for/fold ([result (make-immutable-hash)])
+            ([mail-header (mailbox-digest-mail-headers mailbox-digest)])
+    (let ([mail-digest (mail-digest-from-header-parts mail-header)]
+          [mail-id (main-mail-header-parts-mail-id mail-header)])
+      (let ([from-addr (mail-digest 'from-addr)])
+        (values (hash-update result
+                             from-addr
+                             (lambda (uid-set) (set-add uid-set mail-id))
+                             (list->set '())))))))
+
+                               

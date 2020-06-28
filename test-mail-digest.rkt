@@ -71,6 +71,18 @@
             )
 
            (check-equal?
+            (under-test 'year)
+            2014)
+
+           (check-equal?
+            (under-test 'from-addr)
+            "do-not-reply@inbound.readersupportednews.org")
+
+           (check-equal?
+            (under-test 'to-addrs)
+            (list "uhClem@gmx.de"))
+
+           (check-equal?
             (under-test 'parts)
             (main-mail-header-parts
              50817

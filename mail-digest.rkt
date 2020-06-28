@@ -3,7 +3,9 @@
 (require
   "main-mail-header-parts.rkt"
   "parse-mail-dates.rkt"
-  net/head)
+  net/head
+  gregor
+  )
 
 (provide
  (contract-out
@@ -19,6 +21,7 @@
 
 (define (mail-digest-from-header-parts parts)
   (let ([date (possible-parse-date-time-string (main-mail-header-parts-date-string parts))]
+        [from-addr (car (extract-addresses (main-mail-header-parts-from parts) 'address))]
         [to-addrs (extract-addresses (main-mail-header-parts-to parts) 'address)]
         [cc-addrs (extract-addresses (main-mail-header-parts-cc parts) 'address)]
         [bcc-addrs (extract-addresses (main-mail-header-parts-bcc parts) 'address)]
@@ -34,6 +37,15 @@
           
           [(eq? msg 'date)
            date]
+
+          [(eq? msg 'year)
+           (->year date)]
+
+          [(eq? msg 'from-addr)
+           from-addr]
+          
+          [(eq? msg 'to-addrs)
+           to-addrs]
           
           [(eq? msg 'all-to)
            all-to-addrs]

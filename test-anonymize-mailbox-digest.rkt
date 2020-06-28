@@ -31,5 +31,11 @@
     #t
     )
    )
-  
+
+  (test-suite
+   "load-default-anonymizer-rules"
+   (let ([under-test (load-default-anonymizer-rules)])
+     (printf "(load-default-anonymizer-rules) -> ~a~n" under-test)
+     )
+   )
   ))
