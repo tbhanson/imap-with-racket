@@ -10,6 +10,21 @@ For now credentials are kept in ~/.myImapCreds in a format such as found in
 
   test-data/list-of-test-imap-email-account-credentials.rkt
 
+Install required packages:
+  raco pkg install gregor
+
+Run tests with
+  racket all-tests.rkt
+?
+
+- - - -
+2025-06-20
+Recently asked Claude for advice about how to overcome my google OAuth hurdle. 
+-->
+  claude-oauth-prototype-suggestion.rkt
+  
+
+
 - - - -
 2020-06-20
  - how hard is it to refactor by moving RnD source (pretty much all of this) into sub-directories (say source and test?) ?
