@@ -12,7 +12,7 @@
 
 
 
-; compute some statistics for "INBOX" of account "tim at w-h"
+; compute some statistics for "INBOX" of a real account
 ; NB: when I upped the count examined from 10 to 100 the real time spent was 3+ seconds, up from 3- seconds
 ; when I upped it from 100 to 1000, time elapsed was about 4.4s
 ; however, at 1000 I noticed that stats on "to" are not very interesting: I get all the different combinations incuding various spellings of myself

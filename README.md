@@ -4,7 +4,10 @@
 
 eventual goals:
 
-- support scripting connections to imap servers to allow purging old, expendable mail
+- support scripting connections to imap servers to allow exploring and perhaps manipulating the contents at my mail accounts, e.g. 
+-- reporting statistics
+-- purging some old, expendable mail (in ways still to be defined)
+
 
 For now credentials are kept in ~/.myImapCreds in a format such as found in
 
@@ -19,7 +22,7 @@ Run tests with
 
 - - - -
 2025-06-20
-Recently asked Claude for advice about how to overcome my google OAuth hurdle. 
+Recently asked Claude for advice about how to overcome my google OAuth2 hurdle. 
 -->
   claude-oauth-prototype-suggestion.rkt
   
@@ -42,7 +45,7 @@ So, we should be able to load entire contents of inbox(es) and save them locally
         - reading a bunch of mails, 
         - extracting header bits only, 
         - serializing these, 
-        - writing results to one or more  test files
+        - writing results to one or more test files
         )
 
 2020-05-13

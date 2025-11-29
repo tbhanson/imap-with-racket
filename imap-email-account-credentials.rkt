@@ -2,19 +2,22 @@
 
 ; a structure to hold the basics we need
 (struct imap-email-account-credentials
-  (accountname hostname mailaddress password)
+  (accountname hostname mailaddress password try-tls? xoauth2?)
   #:prefab
   )
 
 (provide
  ; automatic methods from struct
- (contract-out [imap-email-account-credentials (-> string? string? string? string? imap-email-account-credentials?)])
+ (contract-out
+  [imap-email-account-credentials (-> string? string? string? string? boolean? boolean? imap-email-account-credentials?)])
  imap-email-account-credentials?
  
  imap-email-account-credentials-accountname
  imap-email-account-credentials-hostname
  imap-email-account-credentials-mailaddress
  imap-email-account-credentials-password
+ imap-email-account-credentials-try-tls?
+ imap-email-account-credentials-xoauth2?
 
  ; reading one or several
  (contract-out [read-one-email-account-credential (-> port? imap-email-account-credentials?)]

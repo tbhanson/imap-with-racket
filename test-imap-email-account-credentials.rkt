@@ -15,25 +15,29 @@
    #t)
 
   ; test one account, struct-provided basics
-  (let ((some-accountname "my account")
-        (some-host "some.host.net")
-        (some-address "fred@somewhere.org")
-        (some-pwd "fred's password"))
-    (let ((test1 (imap-email-account-credentials some-accountname some-host some-address some-pwd)))
-      (check-equal? (imap-email-account-credentials? test1) #t)
+  (let ([some-accountname "my account"]
+        [some-host "some.host.net"]
+        [some-address "fred@somewhere.org"]
+        [some-pwd "fred's password"]
+        [try-tls? #f]
+        [xoauth2? #f])
+    (let ((test1 (imap-email-account-credentials some-accountname some-host some-address some-pwd try-tls? xoauth2?)))
+      (check-true (imap-email-account-credentials? test1))
       (check-equal? (imap-email-account-credentials-accountname test1) some-accountname)
       (check-equal? (imap-email-account-credentials-hostname test1) some-host)
       (check-equal? (imap-email-account-credentials-mailaddress test1) some-address)
       (check-equal? (imap-email-account-credentials-password test1) some-pwd)
+      (check-equal? (imap-email-account-credentials-try-tls? test1) try-tls?)
+      (check-equal? (imap-email-account-credentials-xoauth2? test1) xoauth2?)
       ))
 
   ; test reading one account from a string
   ; https://docs.racket-lang.org/guide/serialization.html#%28tech._serialization%29
   ;
-  (let ((account-credentials-as-string "#s(imap-email-account-credentials \"an account\" \"ahost.com\" \"me@some.where.net\" \"secret stuff\")"))
+  (let ((account-credentials-as-string "#s(imap-email-account-credentials \"an account\" \"ahost.com\" \"me@some.where.net\" \"secret stuff\" #f #f)"))
     (let ((test2 (read-one-email-account-credential
                   (open-input-string account-credentials-as-string))))
-      (check-equal? (imap-email-account-credentials? test2) #t)
+      (check-true (imap-email-account-credentials? test2))
       (check-equal? (imap-email-account-credentials-accountname test2) "an account")
       (check-equal? (imap-email-account-credentials-mailaddress test2) "me@some.where.net")
       ))
@@ -56,11 +60,11 @@
       (let ([test-cred-hash (read-email-account-credentials-hash-from-file-named filename-containing-two-accounts)])
         (begin
           ; test reading a list of two accounts into a hash of accounts
-          (check-equal?
+          (check-true
            (hash-has-key?
             test-cred-hash
             "an account")
-           #t)
+           )
         
           (check-equal?
            (hash-has-key?
