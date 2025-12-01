@@ -16,7 +16,7 @@
   [oauth2-details-redirect-uri (-> oauth2-details? string?)]
   ; reading or writing
   [read-oauth2-details (-> port? oauth2-details?)]
-  ;  [read-one-email-account-credentials-from-file-named (-> (or/c string? path?) imap-email-account-credentials?)]
+  [read-one-oauth2-details-from-file-named (-> (or/c string? path?) oauth2-details?)]
 
 
   ))
@@ -24,3 +24,6 @@
 (define (read-oauth2-details a-port)
   (read a-port))
   
+(define (read-one-oauth2-details-from-file-named filename)
+  (read-oauth2-details
+   (open-input-file filename)))

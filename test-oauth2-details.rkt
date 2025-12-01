@@ -29,3 +29,9 @@
     (check-equal? (oauth2-details-client-secret test-oauth2-details) "a client secret")
     (check-equal? (oauth2-details-redirect-uri test-oauth2-details) "a redirect uri")
     ))
+
+; test reading one oauth2-details from a file
+(check-true
+ (oauth2-details? (read-one-oauth2-details-from-file-named "test-data/one-test-oauth2-details.rkt")))
+
+

@@ -43,9 +43,8 @@
       ))
 
   ; test reading one account from a file
-  (check-equal?
-   (imap-email-account-credentials? (read-one-email-account-credentials-from-file-named "test-data/one-test-imap-email-account-credentials.rkt"))
-   #t)
+  (check-true
+   (imap-email-account-credentials? (read-one-email-account-credentials-from-file-named "test-data/one-test-imap-email-account-credentials.rkt")))
 
   (let ([filename-containing-two-accounts "test-data/list-of-test-imap-email-account-credentials.rkt"])
     (begin
