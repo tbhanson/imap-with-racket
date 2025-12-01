@@ -17,20 +17,14 @@
   [imap-email-account-credentials-password (-> imap-email-account-credentials? string?)]
   [imap-email-account-credentials-try-tls? (-> imap-email-account-credentials? boolean?)]
   [imap-email-account-credentials-xoauth2? (-> imap-email-account-credentials? boolean?)]
+  ; reading one or several
+  [read-one-email-account-credential (-> port? imap-email-account-credentials?)]
+  [read-one-email-account-credentials-from-file-named (-> (or/c string? path?) imap-email-account-credentials?)]
+  [read-email-account-credentials-hash-from-port (-> port? hash?)]
+  [read-email-account-credentials-hash-from-file-named (-> (or/c string? path?) hash?)]
+  ; convenience
+  [default-ini-filepath (-> path?)]
   )
- 
- 
- 
- 
-
- ; reading one or several
- (contract-out [read-one-email-account-credential (-> port? imap-email-account-credentials?)]
-               [read-one-email-account-credentials-from-file-named (-> (or/c string? path?) imap-email-account-credentials?)]
-               [read-email-account-credentials-hash-from-port (-> port? hash?)]
-               [read-email-account-credentials-hash-from-file-named (-> (or/c string? path?) hash?)]
-               ; convenience
-               [default-ini-filepath (-> path?)]
-               )
  )
 
 

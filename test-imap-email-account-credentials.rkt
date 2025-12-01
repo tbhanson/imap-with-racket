@@ -34,9 +34,9 @@
   ; test reading one account from a string
   ; https://docs.racket-lang.org/guide/serialization.html#%28tech._serialization%29
   ;
-  (let ((account-credentials-as-string "#s(imap-email-account-credentials \"an account\" \"ahost.com\" \"me@some.where.net\" \"secret stuff\" #f #f)"))
-    (let ((test2 (read-one-email-account-credential
-                  (open-input-string account-credentials-as-string))))
+  (let ([account-credentials-as-string "#s(imap-email-account-credentials \"an account\" \"ahost.com\" \"me@some.where.net\" \"secret stuff\" #f #f)"])
+    (let ([test2 (read-one-email-account-credential
+                  (open-input-string account-credentials-as-string))])
       (check-true (imap-email-account-credentials? test2))
       (check-equal? (imap-email-account-credentials-accountname test2) "an account")
       (check-equal? (imap-email-account-credentials-mailaddress test2) "me@some.where.net")
