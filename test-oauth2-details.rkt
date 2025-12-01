@@ -34,4 +34,45 @@
 (check-true
  (oauth2-details? (read-one-oauth2-details-from-file-named "test-data/one-test-oauth2-details.rkt")))
 
+; test writing one oauth2-details to a file
+(let ([test-email-address "fakey@phoney.org"]
+      [client-id "fake client id"]
+      [client-secret "fake client secret"]
+      [redirect-url "fake redirect-url"])
+  (let ([write-to-file-path (oauth2-details-filepath-from-dir (build-path (current-directory) "test-data") test-email-address)]
+        [test-oauth2-details (oauth2-details client-id client-secret redirect-url)])
+    (begin
+      (check-true
+       (string-contains? (path->string write-to-file-path) "test-data"))
+      (check-true
+       (string-suffix? (path->string write-to-file-path) test-email-address))
+      
+      (printf "write-to-file-path: ~a~n" write-to-file-path)
+
+      ; check before
+      (check-false
+       (file-exists? write-to-file-path)
+       (format "test file we want to write (~a) unexpectedly exists" write-to-file-path))
+
+      ; function we test
+      (write-oauth2-details-to-file test-oauth2-details write-to-file-path)
+
+      ; check after
+      (check-true
+       (file-exists? write-to-file-path)
+       (format "test file we wanted to write (~a) unexpectedly does NOT exist" write-to-file-path))
+
+      ; clean up
+      (delete-file write-to-file-path)
+      
+      
+;;       
+;;       (let ([test-output-file
+;;              (open-output-file 
+      )))
+
+
+      
+  
+
 
